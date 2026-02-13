@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Весільне запрошення</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="hero__content container">
+        <div class="hero__names">
+          <span class="hero__amp">&amp;</span>
+          <h1>Volodymyr<br />Anna</h1>
+        </div>
+      </div>
+      <img class="torn" src="assets/torn-bottom.svg" alt="" aria-hidden="true" />
+    </section>
+
+    <section class="invite" id="invite">
+      <div class="container">
+        <h2 class="script">Любі Гості!</h2>
+        <p>
+          Один день у цьому році буде для нас дуже особливим і ми хотіли би його
+          провести у колі близьких для нас людей.
+        </p>
+        <p>
+          З великим задоволенням запрошуємо вас відсвяткувати цей день разом!
+        </p>
+      </div>
+    </section>
+
+    <section class="photo" id="photo">
+      <div class="photo__bg" aria-hidden="true"></div>
+      <div class="photo__content container">
+        <h2 class="script">Чекаємо на Вас!</h2>
+        <p class="uppercase">Володимир &amp; Катерина</p>
+        <div class="photo__badge">Чекаємо на вас</div>
+      </div>
+    </section>
+
+    <section class="rsvp" id="rsvp">
+      <div class="container">
+        <h2>Просимо відповісти на декілька запитань:</h2>
+        <form class="rsvp__form" id="rsvpForm">
+          <label class="field">
+            <span>Ваше ім’я та прізвище</span>
+            <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
+          </label>
+
+          <fieldset class="field">
+            <legend>Чи плануєте ви бути на весіллі?</legend>
+            <label class="option">
+              <input type="radio" name="attend" value="yes" required />
+              Так
+            </label>
+            <label class="option">
+              <input type="radio" name="attend" value="no" />
+              Ні
+            </label>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
+            <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
+            <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>
+            <label class="option"><input type="checkbox" name="drink" value="wine" /> Вино</label>
+            <label class="option"><input type="checkbox" name="drink" value="champagne" /> Шампанське</label>
+            <label class="option"><input type="checkbox" name="drink" value="vodka" /> Горілка</label>
+          </fieldset>
+
+          <button class="btn" type="submit">Відправити</button>
+          <div class="form__note" id="rsvpNote" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="countdown" id="countdown" data-date="2026-06-26T15:30:00">
+      <img class="torn" src="assets/torn-top.svg" alt="" aria-hidden="true" />
+      <div class="countdown__bg" aria-hidden="true"></div>
+      <div class="countdown__content container">
+        <h2>Чекаємо на вас через:</h2>
+        <div class="timer">
+          <div class="timer__unit">
+            <span class="timer__value" id="days">199</span>
+            <span class="timer__label">День(і)</span>
+          </div>
+          <div class="timer__unit">
+            <span class="timer__value" id="hours">21</span>
+            <span class="timer__label">Година(и)</span>
+          </div>
+          <div class="timer__unit">
+            <span class="timer__value" id="minutes">19</span>
+            <span class="timer__label">Хвилин(и)</span>
+          </div>
+          <div class="timer__unit">
+            <span class="timer__value" id="seconds">07</span>
+            <span class="timer__label">Секунд(и)</span>
+          </div>
+        </div>
+      </div>
+      <img class="torn" src="assets/torn-bottom.svg" alt="" aria-hidden="true" />
+    </section>
+
+    <section class="wishes" id="wishes">
+      <div class="container">
+        <h2 class="script">Побажання</h2>
+        <p>
+          Просимо вас не дарувати нам квіти, ми не встигнемо насолодитися їх красою.
+        </p>
+        <p>
+          Приємним компліментом для нас буде, якщо ви замість квітів вирішите
+          подарувати нам пляшку алкогольного напою для нашої колекції.
+        </p>
+      </div>
+    </section>
+
+    <section class="schedule" id="schedule">
+      <div class="container">
+        <h2 class="script">Програма дня</h2>
+        <div class="timeline">
+          <div class="timeline__item">
+            <div class="timeline__time">15:30</div>
+            <div class="timeline__icon">🥂</div>
+            <div class="timeline__label">Збір гостей</div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">16:00</div>
+            <div class="timeline__icon">💍</div>
+            <div class="timeline__label">Церемонія</div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">16:30</div>
+            <div class="timeline__icon">🍽️</div>
+            <div class="timeline__label">Банкет</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dresscode" id="dresscode">
+      <div class="dresscode__bg" aria-hidden="true"></div>
+      <div class="dresscode__content container">
+        <h2 class="script">Дрес-код</h2>
+        <p>Будемо вдячні, якщо ви оберете ваші наряди у таких кольорах:</p>
+        <div class="swatches">
+          <span class="swatch swatch--sage" aria-label="Sage"></span>
+          <span class="swatch swatch--ivory" aria-label="Ivory"></span>
+          <span class="swatch swatch--olive" aria-label="Olive"></span>
+          <span class="swatch swatch--forest" aria-label="Forest"></span>
+          <span class="swatch swatch--black" aria-label="Black"></span>
+        </div>
+      </div>
+      <img class="torn" src="assets/torn-bottom.svg" alt="" aria-hidden="true" />
+    </section>
+
+    <section class="calendar" id="calendar">
+      <div class="container">
+        <h2 class="script">Вересень</h2>
+        <div class="calendar__grid">
+          <div class="calendar__row header">
+            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span>
+          </div>
+          <div class="calendar__row">
+            <span></span><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          </div>
+          <div class="calendar__row">
+            <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+          </div>
+          <div class="calendar__row">
+            <span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span class="mark">18</span><span>19</span>
+          </div>
+          <div class="calendar__row">
+            <span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span>
+          </div>
+          <div class="calendar__row">
+            <span>27</span><span>28</span><span>29</span><span>30</span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="venue" id="venue">
+      <div class="venue__content container">
+        <h2 class="script">Місце проведення</h2>
+        <p class="venue__name">Готель «Caliphornia»</p>
+        <p class="venue__address">вул. Гагаріна 34, Одеса</p>
+        <button class="btn btn--outline" type="button">Подивитись на мапі</button>
+      </div>
+      <div class="venue__illustration" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -402,6 +402,17 @@ input[type="text"] {
   box-shadow: var(--shadow);
 }
 
+.footer {
+  background: #1f2f1a;
+  color: var(--cream);
+}
+
+.footer .container {
+  padding: 36px 0 48px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
 @media (max-width: 720px) {
   .hero__names {
     text-align: center;

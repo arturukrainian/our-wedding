@@ -46,6 +46,12 @@ body.is-loading {
   pointer-events: none;
 }
 
+.preloader__inner {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+}
+
 .preloader__spinner {
   width: 56px;
   height: 56px;
@@ -53,6 +59,22 @@ body.is-loading {
   border: 4px solid rgba(247, 243, 232, 0.3);
   border-top-color: var(--cream);
   animation: spin 0.9s linear infinite;
+}
+
+.preloader__music-btn {
+  border: 0;
+  border-radius: 999px;
+  height: 44px;
+  padding: 0 22px;
+  background: rgba(247, 243, 232, 0.92);
+  color: var(--forest);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.preloader__music-btn.is-hidden {
+  display: none;
 }
 
 @keyframes spin {

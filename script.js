@@ -59,35 +59,25 @@ const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 const heroVideo = document.getElementById("heroVideo");
 const preloader = document.getElementById("preloader");
+const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
+let shouldPlayMusic = true;
+let musicUnlockBound = false;
+let updateMusicButton = () => {};
+
+const setPreloaderMusicButtonVisible = (visible) => {
+  if (!preloaderMusicBtn) return;
+  preloaderMusicBtn.classList.toggle("is-hidden", !visible);
+};
+
+const hidePreloader = () => {
+  if (!preloader) return;
+  preloader.classList.add("is-hidden");
+  document.body.classList.remove("is-loading");
+};
 
 if (preloader) {
   document.body.classList.add("is-loading");
-
-  const hidePreloader = () => {
-    preloader.classList.add("is-hidden");
-    document.body.classList.remove("is-loading");
-  };
-
-  if (heroVideo) {
-    const readyAndPlay = async () => {
-      try {
-        await heroVideo.play();
-      } catch (_) {
-        // Ignore autoplay errors; preloader still hides only when media is ready.
-      }
-      hidePreloader();
-    };
-
-    if (heroVideo.readyState >= 4) {
-      readyAndPlay();
-    } else {
-      heroVideo.addEventListener("canplaythrough", readyAndPlay, { once: true });
-      heroVideo.addEventListener("playing", hidePreloader, { once: true });
-      heroVideo.addEventListener("error", hidePreloader, { once: true });
-    }
-  } else {
-    hidePreloader();
-  }
+  setPreloaderMusicButtonVisible(false);
 }
 
 if (slideNextBtn) {
@@ -127,9 +117,7 @@ if (slideNextBtn) {
 }
 
 if (bgMusic && musicToggle) {
-  let shouldPlayMusic = true;
-
-  const updateMusicButton = () => {
+  updateMusicButton = () => {
     musicToggle.classList.toggle("is-playing", shouldPlayMusic);
     musicToggle.setAttribute("aria-label", shouldPlayMusic ? "Вимкнути музику" : "Увімкнути музику");
   };
@@ -144,26 +132,37 @@ if (bgMusic && musicToggle) {
     }
   };
 
+  const bindMusicUnlock = () => {
+    if (musicUnlockBound) return;
+    musicUnlockBound = true;
+
+    const unlock = async () => {
+      if (!shouldPlayMusic) return;
+      const started = await playMusic();
+      if (started) {
+        window.removeEventListener("pointerdown", unlock);
+        window.removeEventListener("keydown", unlock);
+        window.removeEventListener("touchstart", unlock);
+        musicUnlockBound = false;
+      }
+    };
+
+    window.addEventListener("pointerdown", unlock, { passive: true });
+    window.addEventListener("keydown", unlock);
+    window.addEventListener("touchstart", unlock, { passive: true });
+  };
+
   const pauseMusic = () => {
     bgMusic.pause();
     updateMusicButton();
   };
 
-  const tryAutoplay = async () => {
+  const ensureMusicPlayback = async () => {
     const started = await playMusic();
-    if (started) return;
-
-    const unlock = async () => {
-      if (!shouldPlayMusic) return;
-      await playMusic();
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
-      window.removeEventListener("touchstart", unlock);
-    };
-
-    window.addEventListener("pointerdown", unlock, { once: true });
-    window.addEventListener("keydown", unlock, { once: true });
-    window.addEventListener("touchstart", unlock, { once: true });
+    if (!started) {
+      bindMusicUnlock();
+    }
+    return started;
   };
 
   musicToggle.addEventListener("click", async () => {
@@ -178,22 +177,123 @@ if (bgMusic && musicToggle) {
     updateMusicButton();
 
     if (bgMusic.paused) {
-      const started = await playMusic();
-      if (!started) {
-        const unlock = async () => {
-          if (!shouldPlayMusic) return;
-          await playMusic();
-          window.removeEventListener("pointerdown", unlock);
-          window.removeEventListener("keydown", unlock);
-          window.removeEventListener("touchstart", unlock);
-        };
-        window.addEventListener("pointerdown", unlock, { once: true });
-        window.addEventListener("keydown", unlock, { once: true });
-        window.addEventListener("touchstart", unlock, { once: true });
-      }
+      await ensureMusicPlayback();
     }
   });
 
   updateMusicButton();
-  tryAutoplay();
+
+  const getBufferedRatio = () => {
+    if (!Number.isFinite(bgMusic.duration) || bgMusic.duration <= 0 || bgMusic.buffered.length === 0) {
+      return 0;
+    }
+    const bufferedEnd = bgMusic.buffered.end(bgMusic.buffered.length - 1);
+    return Math.max(0, Math.min(1, bufferedEnd / bgMusic.duration));
+  };
+
+  const waitForAudioBuffer = (targetRatio = 0.4, timeoutMs = 25000) =>
+    new Promise((resolve) => {
+      if (getBufferedRatio() >= targetRatio) {
+        resolve();
+        return;
+      }
+
+      let timeoutId;
+      const check = () => {
+        if (getBufferedRatio() >= targetRatio) {
+          cleanup();
+          resolve();
+        }
+      };
+
+      const cleanup = () => {
+        bgMusic.removeEventListener("progress", check);
+        bgMusic.removeEventListener("loadedmetadata", check);
+        bgMusic.removeEventListener("durationchange", check);
+        bgMusic.removeEventListener("canplaythrough", check);
+        clearTimeout(timeoutId);
+      };
+
+      bgMusic.addEventListener("progress", check);
+      bgMusic.addEventListener("loadedmetadata", check);
+      bgMusic.addEventListener("durationchange", check);
+      bgMusic.addEventListener("canplaythrough", check);
+      timeoutId = window.setTimeout(() => {
+        cleanup();
+        resolve();
+      }, timeoutMs);
+      check();
+    });
+
+  const waitForVideoReady = () =>
+    new Promise((resolve) => {
+      if (!heroVideo) {
+        resolve();
+        return;
+      }
+      if (heroVideo.readyState >= 4) {
+        resolve();
+        return;
+      }
+
+      const done = () => {
+        heroVideo.removeEventListener("canplaythrough", done);
+        heroVideo.removeEventListener("error", done);
+        resolve();
+      };
+
+      heroVideo.addEventListener("canplaythrough", done, { once: true });
+      heroVideo.addEventListener("error", done, { once: true });
+    });
+
+  const bootstrapMedia = async () => {
+    await waitForAudioBuffer(0.4);
+    let started = await ensureMusicPlayback();
+    if (!started && preloaderMusicBtn) {
+      setPreloaderMusicButtonVisible(true);
+      started = await new Promise((resolve) => {
+        const onClick = async () => {
+          const manualStart = await ensureMusicPlayback();
+          if (!manualStart) return;
+          preloaderMusicBtn.removeEventListener("click", onClick);
+          setPreloaderMusicButtonVisible(false);
+          resolve(true);
+        };
+        preloaderMusicBtn.addEventListener("click", onClick);
+      });
+    }
+    await waitForVideoReady();
+    try {
+      await heroVideo?.play();
+    } catch (_) {
+      // Ignore autoplay errors for video.
+    }
+    hidePreloader();
+  };
+
+  bootstrapMedia();
+} else {
+  const waitForVideoReadyOnly = () =>
+    new Promise((resolve) => {
+      if (!heroVideo || heroVideo.readyState >= 4) {
+        resolve();
+        return;
+      }
+      const done = () => {
+        heroVideo.removeEventListener("canplaythrough", done);
+        heroVideo.removeEventListener("error", done);
+        resolve();
+      };
+      heroVideo.addEventListener("canplaythrough", done, { once: true });
+      heroVideo.addEventListener("error", done, { once: true });
+    });
+
+  waitForVideoReadyOnly().then(async () => {
+    try {
+      await heroVideo?.play();
+    } catch (_) {
+      // Ignore autoplay errors for video.
+    }
+    hidePreloader();
+  });
 }

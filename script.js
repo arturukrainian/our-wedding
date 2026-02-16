@@ -4,6 +4,14 @@ const hoursEl = document.getElementById("hours");
 const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 
+function setScreenHeight() {
+  document.documentElement.style.setProperty("--screen-height", `${window.innerHeight}px`);
+}
+
+setScreenHeight();
+window.addEventListener("resize", setScreenHeight);
+window.addEventListener("orientationchange", setScreenHeight);
+
 function updateCountdown() {
   if (!countdownEl) return;
   const target = new Date(countdownEl.dataset.date);

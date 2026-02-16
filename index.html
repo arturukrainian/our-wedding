@@ -10,9 +10,14 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__spinner"></div>
+  </div>
+
   <main>
     <section class="hero" id="hero">
       <video
+        id="heroVideo"
         class="hero__video"
         autoplay
         muted
@@ -210,14 +215,13 @@
     </footer>
   </main>
 
-  <audio id="bgMusic" loop preload="auto" playsinline>
+  <audio id="bgMusic" autoplay loop preload="auto" playsinline>
     <source src="sound.AAC" type="audio/aac" />
     <source src="sound.MP3" type="audio/mpeg" />
   </audio>
 
   <button class="music-toggle" id="musicToggle" type="button" aria-label="Увімкнути музику">
-    <span class="music-icon music-icon--on" aria-hidden="true">♪</span>
-    <span class="music-icon music-icon--off" aria-hidden="true">♪✕</span>
+    <span class="music-icon" aria-hidden="true">♪</span>
   </button>
 
   <button class="slide-next" id="slideNext" type="button" aria-label="Наступний блок">

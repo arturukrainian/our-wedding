@@ -57,6 +57,29 @@ if (rsvpForm) {
 const slideNextBtn = document.getElementById("slideNext");
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
+const heroVideo = document.getElementById("heroVideo");
+const preloader = document.getElementById("preloader");
+
+if (preloader) {
+  document.body.classList.add("is-loading");
+
+  const hidePreloader = () => {
+    preloader.classList.add("is-hidden");
+    document.body.classList.remove("is-loading");
+  };
+
+  if (heroVideo) {
+    if (heroVideo.readyState >= 4) {
+      hidePreloader();
+    } else {
+      heroVideo.addEventListener("canplaythrough", hidePreloader, { once: true });
+      heroVideo.addEventListener("error", hidePreloader, { once: true });
+      window.setTimeout(hidePreloader, 10000);
+    }
+  } else {
+    hidePreloader();
+  }
+}
 
 if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
@@ -141,9 +164,6 @@ if (bgMusic && musicToggle) {
     pauseMusic();
   });
 
-  window.addEventListener("load", () => {
-    tryAutoplay();
-  });
-
+  tryAutoplay();
   updateMusicButton();
 }

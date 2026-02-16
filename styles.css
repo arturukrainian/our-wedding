@@ -26,6 +26,41 @@ body {
   scroll-snap-type: y proximity;
 }
 
+body.is-loading {
+  overflow: hidden;
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #243e1f;
+  z-index: 150;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.preloader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader__spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px solid rgba(247, 243, 232, 0.3);
+  border-top-color: var(--cream);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 main {
   overflow-x: hidden;
 }
@@ -569,8 +604,8 @@ input[type="text"] {
   height: 46px;
   border: 0;
   border-radius: 999px;
-  background: rgba(247, 243, 232, 0.92);
-  color: var(--forest);
+  background: rgba(37, 61, 31, 0.9);
+  color: var(--cream);
   font-family: "Cormorant Garamond", serif;
   font-size: 24px;
   display: grid;
@@ -578,18 +613,12 @@ input[type="text"] {
   cursor: pointer;
   z-index: 99;
   padding: 0;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
 }
 
-.music-icon--on {
-  display: none;
-}
-
-.music-toggle.is-playing .music-icon--on {
-  display: inline;
-}
-
-.music-toggle.is-playing .music-icon--off {
-  display: none;
+.music-toggle.is-playing {
+  opacity: 1;
 }
 
 .hero,

@@ -52,13 +52,57 @@ body.is-loading {
   gap: 20px;
 }
 
-.preloader__spinner {
-  width: 56px;
-  height: 56px;
+.preloader__rings {
+  position: relative;
+  width: 168px;
+  height: 88px;
+}
+
+.ring {
+  position: absolute;
+  top: 8px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 4px solid rgba(247, 243, 232, 0.3);
-  border-top-color: var(--cream);
-  animation: spin 0.9s linear infinite;
+  border: 3px solid rgba(247, 243, 232, 0.45);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px rgba(36, 62, 31, 0.35);
+}
+
+.ring--left {
+  left: 18px;
+}
+
+.ring--right {
+  right: 18px;
+  z-index: 2;
+}
+
+.ring__fill {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 38%),
+    linear-gradient(0deg, rgba(247, 243, 232, 0.96) 0%, rgba(247, 243, 232, 0.72) 100%);
+  transform: translateY(100%);
+  animation: ring-fill 2.1s ease-in-out infinite;
+}
+
+.ring--right .ring__fill {
+  animation-delay: 0.35s;
+}
+
+.preloader__rings::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 42px;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 2px solid rgba(247, 243, 232, 0.45);
+  border-radius: 2px;
+  background: rgba(247, 243, 232, 0.08);
 }
 
 .preloader__music-btn {
@@ -77,9 +121,18 @@ body.is-loading {
   display: none;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@keyframes ring-fill {
+  0% {
+    transform: translateY(100%);
+  }
+  48% {
+    transform: translateY(0%);
+  }
+  60% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
   }
 }
 
@@ -88,11 +141,24 @@ main {
 }
 
 main > section {
+  position: relative;
   min-height: var(--screen-height);
   scroll-snap-align: start;
   scroll-snap-stop: always;
   display: grid;
   place-items: center;
+}
+
+main > section + section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  background: url("assets/torn-top.svg") center/cover no-repeat;
+  pointer-events: none;
+  z-index: 6;
 }
 
 .container {
@@ -197,36 +263,18 @@ p {
 
 .invite {
   position: relative;
-  background: var(--cream);
+  background: #243e1f;
+  color: var(--cream);
   overflow: hidden;
-}
-
-.invite::before,
-.invite::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 48px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.invite::before {
-  top: 0;
-  background-image: url("assets/torn-top.svg");
-}
-
-.invite::after {
-  bottom: 0;
-  background-image: url("assets/torn-bottom.svg");
 }
 
 .invite .container {
   position: relative;
   z-index: 2;
+}
+
+.invite .script {
+  color: var(--cream);
 }
 
 .photo {

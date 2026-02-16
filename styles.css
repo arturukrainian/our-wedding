@@ -206,8 +206,25 @@ input[type="text"] {
 
 .countdown {
   position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--cream);
   color: var(--ink);
+  overflow: hidden;
+}
+
+.countdown > .torn {
+  position: absolute;
+  left: 0;
+  z-index: 2;
+}
+
+.countdown > .torn:first-child {
+  top: 0;
+}
+
+.countdown > .torn:last-child {
+  bottom: 0;
 }
 
 .countdown__bg {
@@ -221,29 +238,37 @@ input[type="text"] {
 .countdown__content {
   position: relative;
   z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  padding-top: 96px;
+  padding-bottom: 96px;
 }
 
 .timer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(8px, 2vw, 22px);
   margin-top: 30px;
 }
 
 .timer__unit {
   display: grid;
   gap: 6px;
-  padding: 12px;
+  padding: 8px 4px;
 }
 
 .timer__value {
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(24px, 4.8vw, 56px);
   font-weight: 600;
+  line-height: 1;
 }
 
 .timer__label {
   font-style: italic;
   color: var(--olive);
+  font-size: clamp(16px, 2.7vw, 22px);
 }
 
 .wishes {

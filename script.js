@@ -55,6 +55,8 @@ if (rsvpForm) {
 }
 
 const slideNextBtn = document.getElementById("slideNext");
+const bgMusic = document.getElementById("bgMusic");
+const musicToggle = document.getElementById("musicToggle");
 
 if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
@@ -90,4 +92,58 @@ if (slideNextBtn) {
   window.addEventListener("scroll", updateSlideButton, { passive: true });
   window.addEventListener("resize", updateSlideButton);
   updateSlideButton();
+}
+
+if (bgMusic && musicToggle) {
+  const updateMusicButton = () => {
+    const isPlaying = !bgMusic.paused;
+    musicToggle.textContent = isPlaying ? "Музика: On" : "Музика: Off";
+    musicToggle.setAttribute("aria-label", isPlaying ? "Вимкнути музику" : "Увімкнути музику");
+  };
+
+  const playMusic = async () => {
+    try {
+      await bgMusic.play();
+      updateMusicButton();
+      return true;
+    } catch (_) {
+      updateMusicButton();
+      return false;
+    }
+  };
+
+  const pauseMusic = () => {
+    bgMusic.pause();
+    updateMusicButton();
+  };
+
+  const tryAutoplay = async () => {
+    const started = await playMusic();
+    if (started) return;
+
+    const unlock = async () => {
+      await playMusic();
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+      window.removeEventListener("touchstart", unlock);
+    };
+
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
+    window.addEventListener("touchstart", unlock, { once: true });
+  };
+
+  musicToggle.addEventListener("click", async () => {
+    if (bgMusic.paused) {
+      await playMusic();
+      return;
+    }
+    pauseMusic();
+  });
+
+  window.addEventListener("load", () => {
+    tryAutoplay();
+  });
+
+  updateMusicButton();
 }

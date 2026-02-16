@@ -81,7 +81,7 @@ body.is-loading {
 }
 
 .ring--right {
-  right: 20px;
+  left: 77px;
   width: 62px;
   height: 62px;
   top: 16px;
@@ -153,18 +153,21 @@ main > section::after {
   left: 0;
   width: 100%;
   height: 56px;
+  background-color: #243e1f;
   pointer-events: none;
   z-index: 6;
 }
 
 main > section::before {
   top: 0;
-  background: url("assets/torn-top.svg") center/cover no-repeat;
+  -webkit-mask: url("assets/torn-top.svg") center/cover no-repeat;
+  mask: url("assets/torn-top.svg") center/cover no-repeat;
 }
 
 main > section::after {
   bottom: 0;
-  background: url("assets/torn-bottom.svg") center/cover no-repeat;
+  -webkit-mask: url("assets/torn-bottom.svg") center/cover no-repeat;
+  mask: url("assets/torn-bottom.svg") center/cover no-repeat;
 }
 
 main > section:first-child::before {
@@ -633,6 +636,8 @@ input[type="text"] {
   content: "";
   position: absolute;
   inset: 0;
+  width: auto;
+  height: auto;
   background:
     linear-gradient(180deg, rgba(16, 30, 14, 0.45) 0%, rgba(16, 30, 14, 0.72) 100%),
     url("location.jpeg") center/cover no-repeat;

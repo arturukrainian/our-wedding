@@ -52,17 +52,24 @@ body.is-loading {
   gap: 20px;
 }
 
+.preloader__date {
+  color: var(--cream);
+  font-size: clamp(28px, 5vw, 46px);
+  letter-spacing: 6px;
+  font-weight: 500;
+}
+
 .preloader__rings {
   position: relative;
-  width: 168px;
-  height: 88px;
+  width: 182px;
+  height: 96px;
 }
 
 .ring {
   position: absolute;
   top: 8px;
-  width: 72px;
-  height: 72px;
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
   border: 3px solid rgba(247, 243, 232, 0.45);
   overflow: hidden;
@@ -70,11 +77,14 @@ body.is-loading {
 }
 
 .ring--left {
-  left: 18px;
+  left: 20px;
 }
 
 .ring--right {
-  right: 18px;
+  right: 20px;
+  width: 62px;
+  height: 62px;
+  top: 16px;
   z-index: 2;
 }
 
@@ -90,19 +100,6 @@ body.is-loading {
 
 .ring--right .ring__fill {
   animation-delay: 0.35s;
-}
-
-.preloader__rings::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 42px;
-  width: 24px;
-  height: 24px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  border: 2px solid rgba(247, 243, 232, 0.45);
-  border-radius: 2px;
-  background: rgba(247, 243, 232, 0.08);
 }
 
 .preloader__music-btn {
@@ -149,16 +146,59 @@ main > section {
   place-items: center;
 }
 
-main > section + section::before {
+main > section::before,
+main > section::after {
   content: "";
   position: absolute;
-  top: 0;
   left: 0;
   width: 100%;
   height: 56px;
-  background: url("assets/torn-top.svg") center/cover no-repeat;
   pointer-events: none;
   z-index: 6;
+}
+
+main > section::before {
+  top: 0;
+  background: url("assets/torn-top.svg") center/cover no-repeat;
+}
+
+main > section::after {
+  bottom: 0;
+  background: url("assets/torn-bottom.svg") center/cover no-repeat;
+}
+
+main > section:first-child::before {
+  opacity: 0;
+}
+
+.hero > .torn,
+.dresscode > .torn,
+.countdown > .torn {
+  display: none;
+}
+
+main > section .container,
+main > section .hero__content,
+main > section .venue__content,
+main > section .dresscode__content,
+main > section .countdown__content {
+  position: relative;
+  z-index: 7;
+}
+
+main > section .hero__content,
+main > section .venue__content,
+main > section .dresscode__content,
+main > section .countdown__content {
+  width: 100%;
+}
+
+main > section .container {
+  z-index: 7;
+}
+
+.torn {
+  pointer-events: none;
 }
 
 .container {

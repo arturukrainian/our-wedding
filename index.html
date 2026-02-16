@@ -12,6 +12,17 @@
 <body>
   <main>
     <section class="hero" id="hero">
+      <video
+        class="hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source src="start video.mov" type="video/quicktime" />
+      </video>
       <div class="hero__bg" aria-hidden="true"></div>
       <div class="hero__content container">
         <div class="hero__names">
@@ -205,7 +216,8 @@
   </audio>
 
   <button class="music-toggle" id="musicToggle" type="button" aria-label="Увімкнути музику">
-    Музика: Off
+    <span class="music-icon music-icon--on" aria-hidden="true">♪</span>
+    <span class="music-icon music-icon--off" aria-hidden="true">♪✕</span>
   </button>
 
   <button class="slide-next" id="slideNext" type="button" aria-label="Наступний блок">

@@ -97,7 +97,7 @@ if (slideNextBtn) {
 if (bgMusic && musicToggle) {
   const updateMusicButton = () => {
     const isPlaying = !bgMusic.paused;
-    musicToggle.textContent = isPlaying ? "Музика: On" : "Музика: Off";
+    musicToggle.classList.toggle("is-playing", isPlaying);
     musicToggle.setAttribute("aria-label", isPlaying ? "Вимкнути музику" : "Увімкнути музику");
   };
 

@@ -69,12 +69,21 @@ if (preloader) {
   };
 
   if (heroVideo) {
-    if (heroVideo.readyState >= 4) {
+    const readyAndPlay = async () => {
+      try {
+        await heroVideo.play();
+      } catch (_) {
+        // Ignore autoplay errors; preloader still hides only when media is ready.
+      }
       hidePreloader();
+    };
+
+    if (heroVideo.readyState >= 4) {
+      readyAndPlay();
     } else {
-      heroVideo.addEventListener("canplaythrough", hidePreloader, { once: true });
+      heroVideo.addEventListener("canplaythrough", readyAndPlay, { once: true });
+      heroVideo.addEventListener("playing", hidePreloader, { once: true });
       heroVideo.addEventListener("error", hidePreloader, { once: true });
-      window.setTimeout(hidePreloader, 10000);
     }
   } else {
     hidePreloader();
@@ -118,19 +127,19 @@ if (slideNextBtn) {
 }
 
 if (bgMusic && musicToggle) {
+  let shouldPlayMusic = true;
+
   const updateMusicButton = () => {
-    const isPlaying = !bgMusic.paused;
-    musicToggle.classList.toggle("is-playing", isPlaying);
-    musicToggle.setAttribute("aria-label", isPlaying ? "Вимкнути музику" : "Увімкнути музику");
+    musicToggle.classList.toggle("is-playing", shouldPlayMusic);
+    musicToggle.setAttribute("aria-label", shouldPlayMusic ? "Вимкнути музику" : "Увімкнути музику");
   };
 
   const playMusic = async () => {
+    if (!shouldPlayMusic) return false;
     try {
       await bgMusic.play();
-      updateMusicButton();
       return true;
     } catch (_) {
-      updateMusicButton();
       return false;
     }
   };
@@ -145,6 +154,7 @@ if (bgMusic && musicToggle) {
     if (started) return;
 
     const unlock = async () => {
+      if (!shouldPlayMusic) return;
       await playMusic();
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
@@ -157,13 +167,33 @@ if (bgMusic && musicToggle) {
   };
 
   musicToggle.addEventListener("click", async () => {
-    if (bgMusic.paused) {
-      await playMusic();
+    shouldPlayMusic = !shouldPlayMusic;
+
+    if (!shouldPlayMusic) {
+      pauseMusic();
+      updateMusicButton();
       return;
     }
-    pauseMusic();
+
+    updateMusicButton();
+
+    if (bgMusic.paused) {
+      const started = await playMusic();
+      if (!started) {
+        const unlock = async () => {
+          if (!shouldPlayMusic) return;
+          await playMusic();
+          window.removeEventListener("pointerdown", unlock);
+          window.removeEventListener("keydown", unlock);
+          window.removeEventListener("touchstart", unlock);
+        };
+        window.addEventListener("pointerdown", unlock, { once: true });
+        window.addEventListener("keydown", unlock, { once: true });
+        window.addEventListener("touchstart", unlock, { once: true });
+      }
+    }
   });
 
-  tryAutoplay();
   updateMusicButton();
+  tryAutoplay();
 }

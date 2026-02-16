@@ -18,7 +18,7 @@
         <span class="ring ring--right"><span class="ring__fill"></span></span>
       </div>
       <button class="preloader__music-btn is-hidden" id="preloaderMusicBtn" type="button">
-        Увімкнути музику
+        УВІМКНУТИ МУЗИКУ
       </button>
     </div>
   </div>
@@ -38,7 +38,7 @@
         <source src="start video.mov" type="video/quicktime" />
       </video>
       <div class="hero__bg" aria-hidden="true"></div>
-      <div class="hero__content container">
+      <div class="hero__content">
         <div class="hero__names">
           <span class="hero__amp">&amp;</span>
           <h1>Артур<br />Анастасія</h1>
@@ -48,7 +48,7 @@
     </section>
 
     <section class="invite" id="invite">
-      <div class="container">
+      <div class="invite__container">
         <h2 class="script">Любі Гості!</h2>
         <p>
           Один день у цьому році буде для нас дуже особливим і ми хотіли би його
@@ -61,7 +61,7 @@
     </section>
 
     <section class="calendar" id="calendar">
-      <div class="container">
+      <div class="calendar__container">
         <h2 class="script">Червень</h2>
         <div class="calendar__grid">
           <div class="calendar__row header">
@@ -87,24 +87,32 @@
     </section>
 
     <section class="venue" id="venue">
-      <div class="venue__content container">
-        <h2 class="script">Місце проведення</h2>
-        <p class="venue__name">Lubich Concept Hotel</p>
-        <p class="venue__address">м. Львів, вул. Уласа Самчука 6</p>
-        <a
-          class="btn btn--outline"
-          href="https://www.google.com/maps?q=Lubich%20Concept%20Hotel%2C%20Lviv%2C%20Ulasa%20Samchuka%206"
-          target="_blank"
-          rel="noopener"
-        >
-          Подивитись на мапі
-        </a>
+      <div class="venue__content">
+        <div class="venue__container-title">
+          <h2 class="script">Місце проведення</h2>
+        </div>
+
+        <div class="venue__container-info">
+          <p class="venue__name">Lubich Concept Hotel</p>
+          <p class="venue__address">м. Львів, вул. Уласа Самчука 6</p>
+        </div>
+
+        <div class="venue__container-action">
+          <a
+            class="btn btn--outline"
+            href="https://www.google.com/maps?q=Lubich%20Concept%20Hotel%2C%20Lviv%2C%20Ulasa%20Samchuka%206"
+            target="_blank"
+            rel="noopener"
+          >
+            ПОДИВИТИСЬ НА МАПІ
+          </a>
+        </div>
       </div>
     </section>
 
     <section class="dresscode" id="dresscode">
       <div class="dresscode__bg" aria-hidden="true"></div>
-      <div class="dresscode__content container">
+      <div class="dresscode__content">
         <h2 class="script">Дрес-код</h2>
         <p>Будемо вдячні, якщо ви оберете ваші наряди у таких кольорах:</p>
         <div class="swatches">
@@ -119,7 +127,7 @@
     </section>
 
     <section class="schedule" id="schedule">
-      <div class="container">
+      <div class="schedule__container">
         <h2 class="script">Програма дня</h2>
         <div class="timeline">
           <div class="timeline__item">
@@ -142,7 +150,7 @@
     </section>
 
     <section class="wishes" id="wishes">
-      <div class="container">
+      <div class="wishes__container">
         <h2 class="script">Побажання</h2>
         <p>
           Просимо вас не дарувати нам квіти, ми не встигнемо насолодитися їх красою.
@@ -157,7 +165,7 @@
     <section class="countdown" id="countdown" data-date="2026-06-26T15:30:00">
       <img class="torn" src="assets/torn-top.svg" alt="" aria-hidden="true" />
       <div class="countdown__bg" aria-hidden="true"></div>
-      <div class="countdown__content container">
+      <div class="countdown__content">
         <h2>Чекаємо на вас через:</h2>
         <div class="timer">
           <div class="timer__unit">
@@ -182,7 +190,7 @@
     </section>
 
     <section class="rsvp" id="rsvp">
-      <div class="container">
+      <div class="rsvp__container">
         <h2>Просимо відповісти на декілька запитань:</h2>
         <form class="rsvp__form" id="rsvpForm">
           <label class="field">
@@ -218,7 +226,7 @@
     </section>
 
     <footer class="footer" id="footer">
-      <div class="container">
+      <div class="footer__container">
         <p>З любов’ю, Артур &amp; Анастасія</p>
       </div>
     </footer>

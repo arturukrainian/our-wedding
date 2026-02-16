@@ -297,3 +297,31 @@ if (bgMusic && musicToggle) {
     hidePreloader();
   });
 }
+
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+  const watchedFiles = ["index.html", "styles.css", "script.js"];
+  const seen = new Map();
+
+  const checkForChanges = async () => {
+    try {
+      const checks = watchedFiles.map(async (file) => {
+        const res = await fetch(`${file}?t=${Date.now()}`, { method: "HEAD", cache: "no-store" });
+        const modified = res.headers.get("last-modified") || "";
+        const etag = res.headers.get("etag") || "";
+        const signature = `${modified}|${etag}`;
+        const prev = seen.get(file);
+        if (prev && prev !== signature) {
+          location.reload();
+          return;
+        }
+        seen.set(file, signature);
+      });
+      await Promise.all(checks);
+    } catch (_) {
+      // Ignore transient local server errors.
+    }
+  };
+
+  checkForChanges();
+  window.setInterval(checkForChanges, 1200);
+}

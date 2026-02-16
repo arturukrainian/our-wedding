@@ -45,3 +45,41 @@ if (rsvpForm) {
     rsvpForm.reset();
   });
 }
+
+const slideNextBtn = document.getElementById("slideNext");
+
+if (slideNextBtn) {
+  const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
+
+  const getCurrentSlideIndex = () => {
+    if (!slides.length) return -1;
+    const marker = window.scrollY + window.innerHeight / 2;
+    for (let i = 0; i < slides.length; i += 1) {
+      const top = slides[i].offsetTop;
+      const nextTop = i < slides.length - 1 ? slides[i + 1].offsetTop : Number.POSITIVE_INFINITY;
+      if (marker >= top && marker < nextTop) {
+        return i;
+      }
+    }
+    return slides.length - 1;
+  };
+
+  const updateSlideButton = () => {
+    const currentIndex = getCurrentSlideIndex();
+    const isLastSlide = currentIndex >= slides.length - 1;
+    slideNextBtn.classList.toggle("is-hidden", isLastSlide);
+  };
+
+  slideNextBtn.addEventListener("click", () => {
+    const currentIndex = getCurrentSlideIndex();
+    const targetIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, slides.length - 1);
+    const targetSlide = slides[targetIndex];
+    if (targetSlide) {
+      targetSlide.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  window.addEventListener("scroll", updateSlideButton, { passive: true });
+  window.addEventListener("resize", updateSlideButton);
+  updateSlideButton();
+}

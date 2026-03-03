@@ -152,6 +152,10 @@ main > section {
   place-items: center;
 }
 
+main > section:not(.hero) {
+  min-height: calc(var(--screen-height) * 1.3);
+}
+
 .torn {
   display: none;
 }

@@ -116,6 +116,58 @@ if (slideNextBtn) {
   updateSlideButton();
 }
 
+const VIDEO_PRELOADER_TIMEOUT_MS = 10000;
+
+const waitForVideoReady = (timeoutMs = VIDEO_PRELOADER_TIMEOUT_MS) =>
+  new Promise((resolve) => {
+    if (!heroVideo) {
+      resolve("no-video");
+      return;
+    }
+    if (heroVideo.readyState >= 2) {
+      resolve("ready-state");
+      return;
+    }
+
+    let settled = false;
+    let timeoutId;
+
+    const cleanup = () => {
+      heroVideo.removeEventListener("loadeddata", onReady);
+      heroVideo.removeEventListener("canplay", onReady);
+      heroVideo.removeEventListener("canplaythrough", onReady);
+      heroVideo.removeEventListener("error", onError);
+      clearTimeout(timeoutId);
+    };
+
+    const finish = (reason) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(reason);
+    };
+
+    const onReady = () => {
+      if (heroVideo.readyState >= 2) {
+        finish("ready");
+        return;
+      }
+      finish("ready-event");
+    };
+
+    const onError = () => {
+      finish("error");
+    };
+
+    heroVideo.addEventListener("loadeddata", onReady, { once: true });
+    heroVideo.addEventListener("canplay", onReady, { once: true });
+    heroVideo.addEventListener("canplaythrough", onReady, { once: true });
+    heroVideo.addEventListener("error", onError, { once: true });
+    timeoutId = window.setTimeout(() => {
+      finish("timeout");
+    }, timeoutMs);
+  });
+
 if (bgMusic && musicToggle) {
   updateMusicButton = () => {
     musicToggle.classList.toggle("is-playing", shouldPlayMusic);
@@ -225,44 +277,28 @@ if (bgMusic && musicToggle) {
       check();
     });
 
-  const waitForVideoReady = () =>
-    new Promise((resolve) => {
-      if (!heroVideo) {
-        resolve();
-        return;
-      }
-      if (heroVideo.readyState >= 4) {
-        resolve();
-        return;
-      }
-
-      const done = () => {
-        heroVideo.removeEventListener("canplaythrough", done);
-        heroVideo.removeEventListener("error", done);
-        resolve();
-      };
-
-      heroVideo.addEventListener("canplaythrough", done, { once: true });
-      heroVideo.addEventListener("error", done, { once: true });
-    });
-
   const bootstrapMedia = async () => {
-    await waitForAudioBuffer(0.4);
-    let started = await ensureMusicPlayback();
-    if (!started && preloaderMusicBtn) {
-      setPreloaderMusicButtonVisible(true);
-      started = await new Promise((resolve) => {
-        const onClick = async () => {
-          const manualStart = await ensureMusicPlayback();
-          if (!manualStart) return;
-          preloaderMusicBtn.removeEventListener("click", onClick);
+    if (preloaderMusicBtn) {
+      preloaderMusicBtn.addEventListener("click", async () => {
+        const manualStart = await ensureMusicPlayback();
+        if (manualStart) {
           setPreloaderMusicButtonVisible(false);
-          resolve(true);
-        };
-        preloaderMusicBtn.addEventListener("click", onClick);
+        }
       });
     }
-    await waitForVideoReady();
+
+    waitForAudioBuffer(0.4).then(async () => {
+      const started = await ensureMusicPlayback();
+      if (!started && preloaderMusicBtn) {
+        setPreloaderMusicButtonVisible(true);
+      }
+    });
+
+    const videoState = await waitForVideoReady();
+    if (videoState === "timeout" || videoState === "error") {
+      console.warn(`Hero video fallback: ${videoState}`);
+    }
+
     try {
       await heroVideo?.play();
     } catch (_) {
@@ -273,22 +309,10 @@ if (bgMusic && musicToggle) {
 
   bootstrapMedia();
 } else {
-  const waitForVideoReadyOnly = () =>
-    new Promise((resolve) => {
-      if (!heroVideo || heroVideo.readyState >= 4) {
-        resolve();
-        return;
-      }
-      const done = () => {
-        heroVideo.removeEventListener("canplaythrough", done);
-        heroVideo.removeEventListener("error", done);
-        resolve();
-      };
-      heroVideo.addEventListener("canplaythrough", done, { once: true });
-      heroVideo.addEventListener("error", done, { once: true });
-    });
-
-  waitForVideoReadyOnly().then(async () => {
+  waitForVideoReady().then(async (videoState) => {
+    if (videoState === "timeout" || videoState === "error") {
+      console.warn(`Hero video fallback: ${videoState}`);
+    }
     try {
       await heroVideo?.play();
     } catch (_) {

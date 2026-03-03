@@ -98,6 +98,7 @@ const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
 const rings = document.getElementById("rings");
 const inviteSection = document.getElementById("invite");
 const calendarSection = document.getElementById("calendar");
+const dressCodeImg = document.querySelector(".dress-code-img");
 let shouldPlayMusic = true;
 let musicUnlockBound = false;
 let updateMusicButton = () => {};
@@ -158,24 +159,17 @@ if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
 
   const getCurrentSlideIndex = () => {
-    if (!slides.length) return -1;
-
-    const marker = window.scrollY + window.innerHeight / 2;
+    if (!slides.length) return 0;
+    const marker = window.scrollY + 1;
     let currentIndex = 0;
 
     for (let i = 0; i < slides.length; i += 1) {
-      const top = slides[i].offsetTop;
-      const bottom = top + slides[i].offsetHeight;
-      if (marker >= top && marker < bottom) {
-        return i;
-      }
-      if (marker >= top) {
+      if (slides[i].offsetTop <= marker) {
         currentIndex = i;
       } else {
         break;
       }
     }
-
     return currentIndex;
   };
 
@@ -288,6 +282,7 @@ if (calendarSection) {
 }
 
 const VIDEO_PRELOADER_TIMEOUT_MS = 10000;
+const DRESS_IMAGE_PRELOAD_TIMEOUT_MS = 4500;
 
 const waitForVideoReady = (timeoutMs = VIDEO_PRELOADER_TIMEOUT_MS) =>
   new Promise((resolve) => {
@@ -334,6 +329,43 @@ const waitForVideoReady = (timeoutMs = VIDEO_PRELOADER_TIMEOUT_MS) =>
     heroVideo.addEventListener("canplay", onReady, { once: true });
     heroVideo.addEventListener("canplaythrough", onReady, { once: true });
     heroVideo.addEventListener("error", onError, { once: true });
+    timeoutId = window.setTimeout(() => {
+      finish("timeout");
+    }, timeoutMs);
+  });
+
+const waitForDressImageReady = (timeoutMs = DRESS_IMAGE_PRELOAD_TIMEOUT_MS) =>
+  new Promise((resolve) => {
+    if (!dressCodeImg) {
+      resolve("no-image");
+      return;
+    }
+    if (dressCodeImg.complete) {
+      resolve(dressCodeImg.naturalWidth > 0 ? "loaded" : "error");
+      return;
+    }
+
+    let settled = false;
+    let timeoutId;
+
+    const cleanup = () => {
+      dressCodeImg.removeEventListener("load", onLoad);
+      dressCodeImg.removeEventListener("error", onError);
+      clearTimeout(timeoutId);
+    };
+
+    const finish = (state) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(state);
+    };
+
+    const onLoad = () => finish("loaded");
+    const onError = () => finish("error");
+
+    dressCodeImg.addEventListener("load", onLoad, { once: true });
+    dressCodeImg.addEventListener("error", onError, { once: true });
     timeoutId = window.setTimeout(() => {
       finish("timeout");
     }, timeoutMs);
@@ -466,8 +498,12 @@ if (bgMusic && musicToggle) {
     });
 
     const videoState = await waitForVideoReady();
+    const dressImageState = await waitForDressImageReady();
     if (videoState === "timeout" || videoState === "error") {
       console.warn(`Hero video fallback: ${videoState}`);
+    }
+    if (dressImageState === "timeout" || dressImageState === "error") {
+      console.warn(`Dress image preload state: ${dressImageState}`);
     }
 
     try {

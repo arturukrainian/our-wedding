@@ -5,12 +5,15 @@ const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 
 function setScreenHeight() {
-  document.documentElement.style.setProperty("--screen-height", `${window.innerHeight}px`);
+  const viewportHeight = window.visualViewport?.height || window.innerHeight;
+  document.documentElement.style.setProperty("--screen-height", `${Math.round(viewportHeight)}px`);
 }
 
 setScreenHeight();
 window.addEventListener("resize", setScreenHeight);
 window.addEventListener("orientationchange", setScreenHeight);
+window.visualViewport?.addEventListener("resize", setScreenHeight);
+window.visualViewport?.addEventListener("scroll", setScreenHeight);
 
 function updateCountdown() {
   if (!countdownEl) return;

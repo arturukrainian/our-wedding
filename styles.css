@@ -234,8 +234,7 @@ p {
 
 .hero {
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: var(--screen-height);
   color: var(--white);
 }
 
@@ -265,8 +264,7 @@ body.is-loading .hero__video {
 .hero__content {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: var(--screen-height);
   display: grid;
   place-items: center;
   padding-bottom: 120px;

@@ -3,10 +3,40 @@ const daysEl = document.getElementById("days");
 const hoursEl = document.getElementById("hours");
 const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
+const daysLabelEl = document.getElementById("daysLabel");
+const hoursLabelEl = document.getElementById("hoursLabel");
+const minutesLabelEl = document.getElementById("minutesLabel");
+const secondsLabelEl = document.getElementById("secondsLabel");
 
 function setScreenHeight() {
   const viewportHeight = window.visualViewport?.height || window.innerHeight;
   document.documentElement.style.setProperty("--screen-height", `${Math.round(viewportHeight)}px`);
+}
+
+function getPluralForm(value, one, few, many) {
+  const n = Math.abs(value);
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+
+  if (mod100 >= 11 && mod100 <= 14) return many;
+  if (mod10 === 1) return one;
+  if (mod10 >= 2 && mod10 <= 4) return few;
+  return many;
+}
+
+function updateTimerLabels(days, hours, minutes, seconds) {
+  if (daysLabelEl) {
+    daysLabelEl.textContent = getPluralForm(days, "день", "дні", "днів");
+  }
+  if (hoursLabelEl) {
+    hoursLabelEl.textContent = getPluralForm(hours, "година", "години", "годин");
+  }
+  if (minutesLabelEl) {
+    minutesLabelEl.textContent = getPluralForm(minutes, "хвилина", "хвилини", "хвилин");
+  }
+  if (secondsLabelEl) {
+    secondsLabelEl.textContent = getPluralForm(seconds, "секунда", "секунди", "секунд");
+  }
 }
 
 setScreenHeight();
@@ -26,6 +56,7 @@ function updateCountdown() {
     hoursEl.textContent = "0";
     minutesEl.textContent = "0";
     secondsEl.textContent = "0";
+    updateTimerLabels(0, 0, 0, 0);
     return;
   }
 
@@ -39,6 +70,7 @@ function updateCountdown() {
   hoursEl.textContent = String(hours).padStart(2, "0");
   minutesEl.textContent = String(minutes).padStart(2, "0");
   secondsEl.textContent = String(seconds).padStart(2, "0");
+  updateTimerLabels(days, hours, minutes, seconds);
 }
 
 setInterval(updateCountdown, 1000);
@@ -125,9 +157,33 @@ if (preloader) {
 if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
 
+  const getCurrentSlideIndex = () => {
+    if (!slides.length) return -1;
+
+    const marker = window.scrollY + window.innerHeight / 2;
+    let currentIndex = 0;
+
+    for (let i = 0; i < slides.length; i += 1) {
+      const top = slides[i].offsetTop;
+      const bottom = top + slides[i].offsetHeight;
+      if (marker >= top && marker < bottom) {
+        return i;
+      }
+      if (marker >= top) {
+        currentIndex = i;
+      } else {
+        break;
+      }
+    }
+
+    return currentIndex;
+  };
+
   const getNextSlide = () => {
-    const marker = window.scrollY + 4;
-    return slides.find((slide) => slide.offsetTop > marker) || null;
+    const currentIndex = getCurrentSlideIndex();
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < 0 || nextIndex >= slides.length) return null;
+    return slides[nextIndex];
   };
 
   const updateSlideButton = () => {

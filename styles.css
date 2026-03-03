@@ -65,47 +65,51 @@ body.is-loading {
 }
 
 .preloader__rings {
+  --t: 0;
   position: relative;
-  width: 182px;
-  height: 96px;
-  margin-left: 16px;
+  width: 176px;
+  height: 84px;
 }
 
 .ring {
   position: absolute;
-  top: 8px;
-  width: 78px;
-  height: 78px;
+  top: 6px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 3px solid rgba(247, 243, 232, 0.45);
-  overflow: hidden;
-  box-shadow: inset 0 0 0 2px rgba(36, 62, 31, 0.35);
+  border: 2px solid rgba(247, 243, 232, 0.72);
+  background: rgba(247, 243, 232, 0.02);
+  box-shadow:
+    inset 0 0 0 1px rgba(247, 243, 232, 0.16),
+    0 10px 24px rgba(8, 16, 8, 0.24);
+  transition:
+    transform 420ms cubic-bezier(0.26, 0.74, 0.22, 1),
+    border-color 260ms ease,
+    box-shadow 260ms ease;
 }
 
 .ring--left {
   left: 20px;
+  z-index: 2;
+  transform: translateX(calc(var(--t) * 26px));
 }
 
 .ring--right {
-  left: 77px;
-  width: 62px;
-  height: 62px;
-  top: 16px;
-  z-index: 2;
+  left: 84px;
+  z-index: 3;
+  transform: translateX(calc(var(--t) * -26px));
 }
 
-.ring__fill {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 38%),
-    linear-gradient(0deg, rgba(247, 243, 232, 0.96) 0%, rgba(247, 243, 232, 0.72) 100%);
-  transform: translateY(100%);
-  animation: ring-fill 2.1s ease-in-out infinite;
+.rings.is-interlock .ring--left {
+  z-index: 4;
 }
 
-.ring--right .ring__fill {
-  animation-delay: 0.35s;
+.rings.is-locked .ring {
+  border-color: rgba(247, 243, 232, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(247, 243, 232, 0.34),
+    0 14px 28px rgba(8, 16, 8, 0.28),
+    0 0 18px rgba(247, 243, 232, 0.24);
 }
 
 .preloader__music-btn {
@@ -124,18 +128,9 @@ body.is-loading {
   display: none;
 }
 
-@keyframes ring-fill {
-  0% {
-    transform: translateY(100%);
-  }
-  48% {
-    transform: translateY(0%);
-  }
-  60% {
-    transform: translateY(0%);
-  }
-  100% {
-    transform: translateY(100%);
+@media (prefers-reduced-motion: reduce) {
+  .rings .ring {
+    transition: none;
   }
 }
 

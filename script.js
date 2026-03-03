@@ -63,9 +63,11 @@ const musicToggle = document.getElementById("musicToggle");
 const heroVideo = document.getElementById("heroVideo");
 const preloader = document.getElementById("preloader");
 const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
+const rings = document.getElementById("rings");
 let shouldPlayMusic = true;
 let musicUnlockBound = false;
 let updateMusicButton = () => {};
+let preloaderOpenStarted = false;
 
 const setPreloaderMusicButtonVisible = (visible) => {
   if (!preloaderMusicBtn) return;
@@ -78,25 +80,63 @@ const hidePreloader = () => {
   document.body.classList.remove("is-loading");
 };
 
+const setRingsProgress = (t) => {
+  if (!rings) return;
+  const value = Math.max(0, Math.min(1, Number.isFinite(t) ? t : 0));
+  rings.style.setProperty("--t", value.toFixed(3));
+  rings.classList.toggle("is-interlock", value >= 0.72 && value <= 0.92);
+  rings.classList.toggle("is-locked", value >= 0.98);
+};
+
+const finishRingsAndOpen = (onDone) => {
+  if (preloaderOpenStarted) return;
+  preloaderOpenStarted = true;
+
+  const done = () => {
+    if (typeof onDone === "function") {
+      onDone();
+    }
+  };
+
+  const prefersReducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (prefersReducedMotion || !rings) {
+    setRingsProgress(1);
+    window.setTimeout(done, 20);
+    return;
+  }
+
+  setRingsProgress(0.55);
+  window.setTimeout(() => {
+    setRingsProgress(1);
+  }, 200);
+  window.setTimeout(done, 560);
+};
+
 if (preloader) {
   document.body.classList.add("is-loading");
   setPreloaderMusicButtonVisible(false);
+  setRingsProgress(0);
 }
 
-if (slideNextBtn) {
+  if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
 
   const getCurrentSlideIndex = () => {
     if (!slides.length) return -1;
-    const marker = window.scrollY + window.innerHeight / 2;
+    const marker = window.scrollY + 2;
+    let currentIndex = 0;
+
     for (let i = 0; i < slides.length; i += 1) {
-      const top = slides[i].offsetTop;
-      const nextTop = i < slides.length - 1 ? slides[i + 1].offsetTop : Number.POSITIVE_INFINITY;
-      if (marker >= top && marker < nextTop) {
-        return i;
+      if (marker >= slides[i].offsetTop) {
+        currentIndex = i;
+      } else {
+        break;
       }
     }
-    return slides.length - 1;
+
+    return currentIndex;
   };
 
   const updateSlideButton = () => {
@@ -307,7 +347,7 @@ if (bgMusic && musicToggle) {
     } catch (_) {
       // Ignore autoplay errors for video.
     }
-    hidePreloader();
+    finishRingsAndOpen(hidePreloader);
   };
 
   bootstrapMedia();
@@ -321,7 +361,7 @@ if (bgMusic && musicToggle) {
     } catch (_) {
       // Ignore autoplay errors for video.
     }
-    hidePreloader();
+    finishRingsAndOpen(hidePreloader);
   });
 }
 

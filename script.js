@@ -200,22 +200,22 @@ if (calendarSection) {
   const applyCalendarDelays = () => {
     if (calendarTitle) {
       calendarTitle.style.setProperty("--reveal-delay", "0ms");
-      calendarTitle.style.setProperty("transition-duration", "800ms");
+      calendarTitle.style.setProperty("transition-duration", "950ms");
     }
 
     calendarWeekdays.forEach((item, index) => {
-      item.style.setProperty("--reveal-delay", `${200 + index * 60}ms`);
-      item.style.setProperty("transition-duration", "700ms");
+      item.style.setProperty("--reveal-delay", `${300 + index * 85}ms`);
+      item.style.setProperty("transition-duration", "900ms");
     });
 
     calendarDays.forEach((item, index) => {
-      item.style.setProperty("--reveal-delay", `${420 + index * 22}ms`);
-      item.style.setProperty("transition-duration", "650ms");
+      item.style.setProperty("--reveal-delay", `${620 + index * 40}ms`);
+      item.style.setProperty("transition-duration", "850ms");
     });
 
     if (calendarNote) {
-      calendarNote.style.setProperty("--reveal-delay", "1280ms");
-      calendarNote.style.setProperty("transition-duration", "700ms");
+      calendarNote.style.setProperty("--reveal-delay", "2280ms");
+      calendarNote.style.setProperty("transition-duration", "850ms");
     }
   };
 
@@ -233,7 +233,7 @@ if (calendarSection) {
         calendarSection.classList.add("is-inview");
         window.setTimeout(() => {
           calendarSection.classList.add("is-ring-animate");
-        }, 1300);
+        }, 2550);
 
         observer.disconnect();
       },

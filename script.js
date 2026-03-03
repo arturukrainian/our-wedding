@@ -125,32 +125,17 @@ if (preloader) {
 if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
 
-  const getCurrentSlideIndex = () => {
-    if (!slides.length) return -1;
-    const marker = window.scrollY + 2;
-    let currentIndex = 0;
-
-    for (let i = 0; i < slides.length; i += 1) {
-      if (marker >= slides[i].offsetTop) {
-        currentIndex = i;
-      } else {
-        break;
-      }
-    }
-
-    return currentIndex;
+  const getNextSlide = () => {
+    const marker = window.scrollY + 4;
+    return slides.find((slide) => slide.offsetTop > marker) || null;
   };
 
   const updateSlideButton = () => {
-    const currentIndex = getCurrentSlideIndex();
-    const isLastSlide = currentIndex >= slides.length - 1;
-    slideNextBtn.classList.toggle("is-hidden", isLastSlide);
+    slideNextBtn.classList.toggle("is-hidden", !getNextSlide());
   };
 
   slideNextBtn.addEventListener("click", () => {
-    const currentIndex = getCurrentSlideIndex();
-    const targetIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, slides.length - 1);
-    const targetSlide = slides[targetIndex];
+    const targetSlide = getNextSlide();
     if (targetSlide) {
       const targetTop =
         targetSlide.offsetTop + targetSlide.offsetHeight / 2 - window.innerHeight / 2;

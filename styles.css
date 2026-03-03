@@ -637,31 +637,91 @@ input[type="text"] {
   font-size: 18px;
 }
 
-.calendar__row {
+.calendar__weekdays,
+.calendar__days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 16px;
 }
 
-.calendar__row span {
+.calendar__weekday,
+.calendar__day {
   padding: 10px 0;
+  text-align: center;
 }
 
-.calendar__row.header span {
+.calendar__weekday {
   font-weight: 600;
 }
 
-.calendar__row .mark {
+.calendar__day {
   position: relative;
+}
+
+.calendar__day.is-empty {
+  opacity: 0.35;
+}
+
+.calendar__day[data-day="26"] {
   font-weight: 600;
 }
 
-.calendar__row .mark::after {
+.calendar__day[data-day="26"]::after {
   content: "";
   position: absolute;
   inset: -4px;
   border: 2px solid var(--forest);
   border-radius: 999px;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1), opacity 700ms cubic-bezier(.2,.8,.2,1);
+}
+
+.calendar.is-ring-animate .calendar__day[data-day="26"]::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.calendar__note {
+  margin: 18px 0 0;
+  color: var(--olive);
+  font-size: clamp(16px, 2.2vw, 20px);
+}
+
+.calendar.is-animatable .calendar__title,
+.calendar.is-animatable .calendar__weekday,
+.calendar.is-animatable .calendar__day,
+.calendar.is-animatable .calendar__note {
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(2px);
+  transition:
+    opacity 800ms cubic-bezier(.2,.8,.2,1),
+    transform 800ms cubic-bezier(.2,.8,.2,1),
+    filter 800ms cubic-bezier(.2,.8,.2,1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.calendar.is-animatable.is-inview .calendar__title,
+.calendar.is-animatable.is-inview .calendar__weekday,
+.calendar.is-animatable.is-inview .calendar__day,
+.calendar.is-animatable.is-inview .calendar__note {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar.is-animatable .calendar__title,
+  .calendar.is-animatable .calendar__weekday,
+  .calendar.is-animatable .calendar__day,
+  .calendar.is-animatable .calendar__note,
+  .calendar__day[data-day="26"]::after {
+    transition: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
 
 .venue {

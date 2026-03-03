@@ -65,6 +65,7 @@ const preloader = document.getElementById("preloader");
 const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
 const rings = document.getElementById("rings");
 const inviteSection = document.getElementById("invite");
+const calendarSection = document.getElementById("calendar");
 let shouldPlayMusic = true;
 let musicUnlockBound = false;
 let updateMusicButton = () => {};
@@ -185,6 +186,63 @@ if (inviteSection) {
     );
 
     inviteObserver.observe(inviteSection);
+  }
+}
+
+if (calendarSection) {
+  const calendarTitle = calendarSection.querySelector(".calendar__title");
+  const calendarWeekdays = Array.from(calendarSection.querySelectorAll(".calendar__weekday"));
+  const calendarDays = Array.from(calendarSection.querySelectorAll(".calendar__day"));
+  const calendarNote = calendarSection.querySelector(".calendar__note");
+  const reducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const applyCalendarDelays = () => {
+    if (calendarTitle) {
+      calendarTitle.style.setProperty("--reveal-delay", "0ms");
+      calendarTitle.style.setProperty("transition-duration", "800ms");
+    }
+
+    calendarWeekdays.forEach((item, index) => {
+      item.style.setProperty("--reveal-delay", `${200 + index * 60}ms`);
+      item.style.setProperty("transition-duration", "700ms");
+    });
+
+    calendarDays.forEach((item, index) => {
+      item.style.setProperty("--reveal-delay", `${420 + index * 22}ms`);
+      item.style.setProperty("transition-duration", "650ms");
+    });
+
+    if (calendarNote) {
+      calendarNote.style.setProperty("--reveal-delay", "1280ms");
+      calendarNote.style.setProperty("transition-duration", "700ms");
+    }
+  };
+
+  calendarSection.classList.add("is-animatable");
+  applyCalendarDelays();
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    calendarSection.classList.add("is-inview", "is-ring-animate");
+  } else {
+    const calendarObserver = new IntersectionObserver(
+      (entries, observer) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+
+        calendarSection.classList.add("is-inview");
+        window.setTimeout(() => {
+          calendarSection.classList.add("is-ring-animate");
+        }, 1300);
+
+        observer.disconnect();
+      },
+      {
+        threshold: 0.35,
+      }
+    );
+
+    calendarObserver.observe(calendarSection);
   }
 }
 

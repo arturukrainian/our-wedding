@@ -456,8 +456,8 @@ input[type="text"] {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--cream);
-  color: var(--ink);
+  background: #243e1f;
+  color: var(--cream);
   overflow: hidden;
 }
 
@@ -478,9 +478,7 @@ input[type="text"] {
 .countdown__bg {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 100%),
-    url("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;
+  background: none;
 }
 
 .countdown__content {
@@ -515,7 +513,7 @@ input[type="text"] {
 
 .timer__label {
   font-style: italic;
-  color: var(--olive);
+  color: rgba(247, 243, 232, 0.8);
   font-size: clamp(16px, 2.7vw, 22px);
 }
 

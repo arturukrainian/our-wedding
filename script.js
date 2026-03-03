@@ -150,7 +150,12 @@ if (preloader) {
     const targetIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, slides.length - 1);
     const targetSlide = slides[targetIndex];
     if (targetSlide) {
-      targetSlide.scrollIntoView({ behavior: "smooth", block: "start" });
+      const targetTop =
+        targetSlide.offsetTop + targetSlide.offsetHeight / 2 - window.innerHeight / 2;
+      window.scrollTo({
+        top: Math.max(0, Math.round(targetTop)),
+        behavior: "smooth",
+      });
     }
   });
 

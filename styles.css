@@ -158,7 +158,6 @@ main > section:not(.hero) {
 .hero__content,
 .invite__container,
 .venue__content,
-.dresscode__content,
 .schedule__container,
 .wishes__container,
 .countdown__content,
@@ -190,7 +189,6 @@ main > section:not(.hero) {
 
 .hero__content,
 .venue__content,
-.dresscode__content,
 .countdown__content {
   width: 100%;
 }
@@ -576,56 +574,21 @@ input[type="text"] {
 
 .dresscode {
   position: relative;
-  color: var(--cream);
 }
 
-.dresscode__bg {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(10, 15, 10, 0.45) 0%, rgba(10, 15, 10, 0.7) 100%),
-    url("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;
-  filter: saturate(0.7);
+main > section.dress-code-section {
+  min-height: 0;
+  display: block;
+  background-color: #e5dbc9;
 }
 
-.dresscode__content {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: grid;
-  align-content: center;
-  padding: 96px 0;
+.dress-code-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 1600px;
+  margin: 0 auto;
 }
-
-.dresscode > .torn {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  z-index: 2;
-}
-
-.swatches {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 28px;
-  flex-wrap: wrap;
-}
-
-.swatch {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  box-shadow: var(--shadow);
-}
-
-.swatch--sage { background: #b8c9a5; }
-.swatch--ivory { background: #f4f0d8; }
-.swatch--olive { background: #6c7750; }
-.swatch--forest { background: #2c4b2c; }
-.swatch--black { background: #111; }
 
 .calendar {
   background: var(--cream);
@@ -888,7 +851,6 @@ input[type="text"] {
 .hero__content,
 .countdown,
 .countdown__content,
-.dresscode__content,
 .venue,
 .venue__content,
 .footer {

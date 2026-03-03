@@ -64,6 +64,7 @@ const heroVideo = document.getElementById("heroVideo");
 const preloader = document.getElementById("preloader");
 const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
 const rings = document.getElementById("rings");
+const inviteSection = document.getElementById("invite");
 let shouldPlayMusic = true;
 let musicUnlockBound = false;
 let updateMusicButton = () => {};
@@ -120,7 +121,7 @@ if (preloader) {
   setRingsProgress(0);
 }
 
-  if (slideNextBtn) {
+if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
 
   const getCurrentSlideIndex = () => {
@@ -162,6 +163,29 @@ if (preloader) {
   window.addEventListener("scroll", updateSlideButton, { passive: true });
   window.addEventListener("resize", updateSlideButton);
   updateSlideButton();
+}
+
+if (inviteSection) {
+  const reducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    inviteSection.classList.add("is-visible");
+  } else {
+    const inviteObserver = new IntersectionObserver(
+      (entries, observer) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        inviteSection.classList.add("is-visible");
+        observer.disconnect();
+      },
+      {
+        threshold: 0.45,
+      }
+    );
+
+    inviteObserver.observe(inviteSection);
+  }
 }
 
 const VIDEO_PRELOADER_TIMEOUT_MS = 10000;

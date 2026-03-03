@@ -301,11 +301,56 @@ body.is-loading .hero__video {
 .invite__container {
   position: relative;
   z-index: 2;
+  width: min(92vw, 680px);
 }
 
 .invite .script {
   color: var(--cream);
   font-size: 3rem;
+  margin-bottom: 36px;
+}
+
+.invite__container > p {
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.72;
+}
+
+.invite__container > p + p {
+  margin-top: 24px;
+}
+
+.invite .script,
+.invite__container > p {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.invite.is-visible .script,
+.invite.is-visible .invite__container > p {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.invite.is-visible .script {
+  transition: opacity 800ms ease, transform 800ms ease;
+}
+
+.invite.is-visible .invite__container > p:first-of-type {
+  transition: opacity 700ms ease 250ms, transform 700ms ease 250ms;
+}
+
+.invite.is-visible .invite__container > p:nth-of-type(2) {
+  transition: opacity 700ms ease 450ms, transform 700ms ease 450ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invite .script,
+  .invite__container > p {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .photo {

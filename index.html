@@ -213,13 +213,13 @@
                 <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дорослих">−</button>
                 <input
                   class="guest-counter__value"
-                  type="number"
+                  type="text"
                   name="adults"
                   id="adultsCount"
-                  min="0"
-                  max="10"
+                  inputmode="numeric"
                   value="1"
                   readonly
+                  aria-live="polite"
                 />
                 <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дорослих">+</button>
               </div>
@@ -230,13 +230,13 @@
                 <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дітей">−</button>
                 <input
                   class="guest-counter__value"
-                  type="number"
+                  type="text"
                   name="kids"
                   id="kidsCount"
-                  min="0"
-                  max="10"
+                  inputmode="numeric"
                   value="0"
                   readonly
+                  aria-live="polite"
                 />
                 <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дітей">+</button>
               </div>
@@ -251,11 +251,26 @@
         <div class="rsvp-step" data-step="3">
           <fieldset class="field field--card field--chips">
             <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
-            <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
-            <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>
-            <label class="option"><input type="checkbox" name="drink" value="wine" /> Вино</label>
-            <label class="option"><input type="checkbox" name="drink" value="champagne" /> Шампанське</label>
-            <label class="option"><input type="checkbox" name="drink" value="vodka" /> Горілка</label>
+            <label class="option">
+              <input type="checkbox" name="drink" value="whiskey" />
+              <span class="option__chip">Віскі</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="drink" value="rum" />
+              <span class="option__chip">Ром</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="drink" value="wine" />
+              <span class="option__chip">Вино</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="drink" value="champagne" />
+              <span class="option__chip">Шампанське</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="drink" value="vodka" />
+              <span class="option__chip">Горілка</span>
+            </label>
           </fieldset>
           <div class="rsvp__actions">
             <button class="btn btn--soft" type="button" data-prev-step="2">Назад</button>

@@ -446,6 +446,15 @@ body.is-loading .hero__video {
   display: grid;
 }
 
+.rsvp-step.is-active .field--card,
+.rsvp-step.is-active .rsvp__actions {
+  animation: rsvp-step-fade-in 620ms var(--ui-ease) both;
+}
+
+.rsvp-step.is-active .rsvp__actions {
+  animation-delay: 60ms;
+}
+
 .rsvp__actions {
   display: flex;
   gap: var(--s-2);
@@ -577,6 +586,19 @@ body.is-loading .hero__video {
   color: #253d1f;
 }
 
+.btn {
+  border: none;
+  background: #d3ccb8;
+  color: #253d1f;
+  padding: 14px 34px;
+  border-radius: 999px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  justify-self: center;
+  text-decoration: none;
+}
+
 .rsvp .btn,
 .rsvp-modal .btn {
   border: none;
@@ -621,6 +643,18 @@ body.is-loading .hero__video {
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+.rsvp .btn--soft:hover,
+.rsvp-modal .btn--soft:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.rsvp .btn--soft:active,
+.rsvp-modal .btn--soft:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 .form__note {
   text-align: center;
   font-size: 16px;
@@ -636,7 +670,7 @@ body.is-loading .hero__video {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 260ms var(--ui-ease), visibility 260ms var(--ui-ease);
+  transition: opacity 300ms var(--ui-ease), visibility 300ms var(--ui-ease);
 }
 
 .rsvp-modal.is-open {
@@ -665,12 +699,14 @@ body.is-loading .hero__video {
   box-shadow: var(--shadow-2);
   display: grid;
   justify-items: center;
+  --dialog-duration: 300ms;
   transform: translateY(24px) scale(0.98);
-  transition: transform 520ms var(--ui-ease), opacity 520ms var(--ui-ease);
+  transition: transform var(--dialog-duration) var(--ui-ease), opacity var(--dialog-duration) var(--ui-ease);
   opacity: 0;
 }
 
 .rsvp-modal.is-open .rsvp-modal__dialog {
+  --dialog-duration: 520ms;
   transform: translateY(0) scale(1);
   opacity: 1;
 }
@@ -678,6 +714,7 @@ body.is-loading .hero__video {
 .rsvp-modal__dialog h2 {
   margin-bottom: 8px;
   letter-spacing: 0.02em;
+  animation: rsvp-step-fade-in 520ms var(--ui-ease) both;
 }
 
 .rsvp-modal__close {
@@ -706,16 +743,6 @@ body.is-loading .hero__video {
   box-shadow: 0 0 0 2px var(--accent);
 }
 
-.field--chips .option {
-  width: 100%;
-  min-height: 46px;
-  border-radius: var(--r-pill);
-  background: #f3efe7;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 12px 16px;
-  transition: transform 160ms var(--ui-ease), box-shadow 160ms var(--ui-ease), background-color 160ms var(--ui-ease), color 160ms var(--ui-ease), border-color 160ms var(--ui-ease);
-}
-
 .field--chips {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -735,16 +762,76 @@ body.is-loading .hero__video {
   white-space: nowrap;
 }
 
-.field--chips .option:has(input[type="checkbox"]:checked) {
+.field--chips .option {
+  width: 100%;
+}
+
+.field--chips .option__chip {
+  width: 100%;
+  min-height: 46px;
+  border-radius: var(--r-pill);
+  background: #f3efe7;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 12px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 160ms var(--ui-ease), box-shadow 160ms var(--ui-ease), background-color 160ms var(--ui-ease), color 160ms var(--ui-ease), border-color 160ms var(--ui-ease);
+}
+
+.field--chips .option input[type="checkbox"]:checked + .option__chip {
   background: var(--accent);
   color: #ffffff;
   border-color: transparent;
   box-shadow: var(--shadow-1);
-  transform: scale(1.03);
 }
 
-.field--chips .option:has(input[type="checkbox"]:focus-visible) {
+.field--chips .option input[type="checkbox"]:checked + .option__chip {
+  animation: chip-select-pop 160ms var(--ui-ease);
+}
+
+.field--chips .option input[type="checkbox"]:focus-visible + .option__chip {
   box-shadow: 0 0 0 2px var(--accent);
+}
+
+@keyframes chip-select-pop {
+  0% {
+    transform: scale(1);
+  }
+  55% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes rsvp-step-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rsvp-modal,
+  .rsvp-modal__dialog,
+  .rsvp .btn,
+  .rsvp-modal .btn,
+  .guest-counter__btn,
+  .field--chips .option,
+  .field--chips .option__chip,
+  .rsvp-modal__close,
+  .rsvp-step.is-active .field--card,
+  .rsvp-step.is-active .rsvp__actions,
+  .rsvp-modal__dialog h2 {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 .countdown {

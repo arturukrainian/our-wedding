@@ -155,77 +155,7 @@
     <section class="rsvp" id="rsvp">
       <div class="rsvp__container">
         <h2>просимо відповісти <br>на декілька запитань:</h2>
-        <form class="rsvp__form" id="rsvpForm">
-          <div class="rsvp-step is-active" data-step="1">
-            <label class="field">
-              <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
-            </label>
-            <div class="rsvp__actions">
-              <button class="btn" type="button" data-next-step="2">Далі</button>
-            </div>
-          </div>
-
-          <div class="rsvp-step" data-step="2">
-            <fieldset class="field">
-              <legend>Скільки гостей буде з вами?</legend>
-              <div class="guest-counter" data-counter="adults">
-                <span class="guest-counter__label">Дорослі</span>
-                <div class="guest-counter__controls">
-                  <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дорослих">−</button>
-                  <input
-                    class="guest-counter__value"
-                    type="number"
-                    name="adults"
-                    id="adultsCount"
-                    min="0"
-                    max="10"
-                    value="1"
-                    readonly
-                  />
-                  <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дорослих">+</button>
-                </div>
-              </div>
-              <div class="guest-counter" data-counter="kids">
-                <span class="guest-counter__label">Діти</span>
-                <div class="guest-counter__controls">
-                  <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дітей">−</button>
-                  <input
-                    class="guest-counter__value"
-                    type="number"
-                    name="kids"
-                    id="kidsCount"
-                    min="0"
-                    max="10"
-                    value="0"
-                    readonly
-                  />
-                  <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дітей">+</button>
-                </div>
-              </div>
-            </fieldset>
-            <div class="rsvp__actions">
-              <button class="btn btn--soft" type="button" data-prev-step="1">Назад</button>
-              <button class="btn" type="button" data-next-step="3">Далі</button>
-            </div>
-          </div>
-
-          <div class="rsvp-step" data-step="3">
-            <fieldset class="field">
-              <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
-              <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
-              <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>
-              <label class="option"><input type="checkbox" name="drink" value="wine" /> Вино</label>
-              <label class="option"><input type="checkbox" name="drink" value="champagne" /> Шампанське</label>
-              <label class="option"><input type="checkbox" name="drink" value="vodka" /> Горілка</label>
-            </fieldset>
-            <div class="rsvp__actions">
-              <button class="btn btn--soft" type="button" data-prev-step="2">Назад</button>
-              <button class="btn" type="submit">Відправити</button>
-            </div>
-          </div>
-
-          <div class="form__note" id="rsvpNote" role="status" aria-live="polite"></div>
-        </form>
+        <button class="btn" id="openRsvpModal" type="button">Відкрити анкету</button>
       </div>
     </section>
 
@@ -257,6 +187,85 @@
     </section>
 
   </main>
+
+  <div class="rsvp-modal" id="rsvpModal" aria-hidden="true">
+    <div class="rsvp-modal__backdrop" data-close-rsvp-modal></div>
+    <div class="rsvp-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rsvpModalTitle">
+      <button class="rsvp-modal__close" id="closeRsvpModal" type="button" aria-label="Закрити анкету">×</button>
+      <h2 id="rsvpModalTitle">Анкета гостя</h2>
+      <form class="rsvp__form" id="rsvpForm">
+        <div class="rsvp-step is-active" data-step="1">
+          <label class="field">
+            <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
+          </label>
+          <div class="rsvp__actions">
+            <button class="btn" type="button" data-next-step="2">Далі</button>
+          </div>
+        </div>
+
+        <div class="rsvp-step" data-step="2">
+          <fieldset class="field">
+            <legend>Скільки гостей буде з вами?</legend>
+            <div class="guest-counter" data-counter="adults">
+              <span class="guest-counter__label">Дорослі</span>
+              <div class="guest-counter__controls">
+                <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дорослих">−</button>
+                <input
+                  class="guest-counter__value"
+                  type="number"
+                  name="adults"
+                  id="adultsCount"
+                  min="0"
+                  max="10"
+                  value="1"
+                  readonly
+                />
+                <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дорослих">+</button>
+              </div>
+            </div>
+            <div class="guest-counter" data-counter="kids">
+              <span class="guest-counter__label">Діти</span>
+              <div class="guest-counter__controls">
+                <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дітей">−</button>
+                <input
+                  class="guest-counter__value"
+                  type="number"
+                  name="kids"
+                  id="kidsCount"
+                  min="0"
+                  max="10"
+                  value="0"
+                  readonly
+                />
+                <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дітей">+</button>
+              </div>
+            </div>
+          </fieldset>
+          <div class="rsvp__actions">
+            <button class="btn btn--soft" type="button" data-prev-step="1">Назад</button>
+            <button class="btn" type="button" data-next-step="3">Далі</button>
+          </div>
+        </div>
+
+        <div class="rsvp-step" data-step="3">
+          <fieldset class="field">
+            <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
+            <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
+            <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>
+            <label class="option"><input type="checkbox" name="drink" value="wine" /> Вино</label>
+            <label class="option"><input type="checkbox" name="drink" value="champagne" /> Шампанське</label>
+            <label class="option"><input type="checkbox" name="drink" value="vodka" /> Горілка</label>
+          </fieldset>
+          <div class="rsvp__actions">
+            <button class="btn btn--soft" type="button" data-prev-step="2">Назад</button>
+            <button class="btn" type="submit">Відправити</button>
+          </div>
+        </div>
+
+        <div class="form__note" id="rsvpNote" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
 
   <audio id="bgMusic" autoplay loop preload="auto" playsinline>
     <source src="sound.AAC" type="audio/aac" />

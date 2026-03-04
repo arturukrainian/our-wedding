@@ -79,11 +79,33 @@ updateCountdown();
 
 const rsvpForm = document.getElementById("rsvpForm");
 const rsvpNote = document.getElementById("rsvpNote");
+const rsvpModal = document.getElementById("rsvpModal");
+const openRsvpModalBtn = document.getElementById("openRsvpModal");
+const closeRsvpModalBtn = document.getElementById("closeRsvpModal");
 
 if (rsvpForm) {
   const steps = Array.from(rsvpForm.querySelectorAll(".rsvp-step"));
   const guestCounters = Array.from(rsvpForm.querySelectorAll(".guest-counter"));
   let currentStep = 0;
+
+  const openRsvpModal = () => {
+    if (!rsvpModal) return;
+    rsvpModal.classList.add("is-open");
+    rsvpModal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("is-rsvp-open");
+    document.body.classList.add("is-form-active");
+    const firstInput = rsvpForm.querySelector('input[name="name"]');
+    firstInput?.focus({ preventScroll: true });
+  };
+
+  const closeRsvpModal = () => {
+    if (!rsvpModal) return;
+    rsvpModal.classList.remove("is-open");
+    rsvpModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("is-rsvp-open");
+    document.body.classList.remove("is-form-active");
+    setScreenHeight();
+  };
 
   const setStep = (index) => {
     currentStep = Math.max(0, Math.min(index, steps.length - 1));
@@ -157,8 +179,14 @@ if (rsvpForm) {
     if (rsvpNote) {
       rsvpNote.textContent = "Дякуємо! Ми отримали вашу відповідь.";
     }
-    rsvpForm.reset();
-    setStep(0);
+    window.setTimeout(() => {
+      rsvpForm.reset();
+      setStep(0);
+      if (rsvpNote) {
+        rsvpNote.textContent = "";
+      }
+      closeRsvpModal();
+    }, 900);
   });
 
   rsvpForm.addEventListener("focusin", () => {
@@ -179,6 +207,27 @@ if (rsvpForm) {
     const input = counter.querySelector(".guest-counter__value");
     if (!input) return;
     input.setAttribute("aria-live", "polite");
+  });
+
+  openRsvpModalBtn?.addEventListener("click", () => {
+    if (rsvpNote) rsvpNote.textContent = "";
+    setStep(0);
+    openRsvpModal();
+  });
+
+  closeRsvpModalBtn?.addEventListener("click", closeRsvpModal);
+
+  rsvpModal?.addEventListener("click", (event) => {
+    const closeTarget = event.target.closest("[data-close-rsvp-modal]");
+    if (closeTarget) {
+      closeRsvpModal();
+    }
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && rsvpModal?.classList.contains("is-open")) {
+      closeRsvpModal();
+    }
   });
 }
 

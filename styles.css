@@ -22,6 +22,7 @@
   --shadow-2: 0 16px 40px rgba(0, 0, 0, 0.12);
   --ui-border: 1px solid rgba(0, 0, 0, 0.08);
   --ui-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ui-font: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
 }
 
 * {
@@ -426,13 +427,14 @@ body.is-loading .hero__video {
 
 .rsvp__form {
   display: grid;
-  gap: var(--s-3);
-  margin-top: var(--s-4);
+  gap: var(--s-4);
+  margin-top: 0;
   text-align: center;
   justify-items: center;
-  width: min(92vw, 700px);
-  min-height: 340px;
-  align-content: start;
+  width: min(100%, 620px);
+  min-height: 0;
+  align-content: center;
+  font-family: var(--ui-font);
 }
 
 .rsvp-step {
@@ -470,29 +472,31 @@ body.is-loading .hero__video {
 }
 
 .rsvp-modal .field legend {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.45;
   margin-bottom: 2px;
+  font-family: var(--ui-font);
 }
 
 .rsvp-modal .field--card {
   background: #f4f1ea;
   border-radius: var(--r-xl);
-  padding: var(--s-5);
+  padding: clamp(20px, 2.8vw, 28px);
   border: 1px solid rgba(0, 0, 0, 0.05);
   gap: var(--s-3);
 }
 
 .rsvp-modal input[type="text"] {
   width: 100%;
-  max-width: 420px;
-  padding: 18px 22px;
+  max-width: 480px;
+  padding: 17px 21px;
   border-radius: var(--r-lg);
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   font-size: 16px;
   background: #f3efe7;
   color: var(--forest);
+  font-family: var(--ui-font);
   transition: box-shadow 200ms var(--ui-ease), background-color 200ms var(--ui-ease);
 }
 
@@ -515,6 +519,7 @@ body.is-loading .hero__video {
   font-size: 12px;
   line-height: 1.2;
   color: rgba(190, 70, 70, 0.9);
+  font-family: var(--ui-font);
 }
 
 .option {
@@ -541,12 +546,13 @@ body.is-loading .hero__video {
 .guest-counter__label {
   font-size: 16px;
   font-weight: 600;
+  font-family: var(--ui-font);
 }
 
 .guest-counter__controls {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: #f3efe7;
   border-radius: var(--r-pill);
   padding: 8px;
@@ -575,7 +581,7 @@ body.is-loading .hero__video {
 }
 
 .guest-counter__value {
-  width: 68px;
+  width: 52px;
   height: 42px;
   border: none;
   border-radius: var(--r-pill);
@@ -584,6 +590,7 @@ body.is-loading .hero__video {
   font-weight: 600;
   text-align: center;
   color: #253d1f;
+  font-family: var(--ui-font);
 }
 
 .btn {
@@ -597,6 +604,7 @@ body.is-loading .hero__video {
   cursor: pointer;
   justify-self: center;
   text-decoration: none;
+  font-family: var(--ui-font);
 }
 
 .rsvp .btn,
@@ -604,9 +612,10 @@ body.is-loading .hero__video {
   border: none;
   background: var(--accent);
   color: var(--cream);
-  padding: 14px 30px;
+  min-height: 50px;
+  padding: 0 30px;
   border-radius: 999px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.03em;
   cursor: pointer;
@@ -657,19 +666,21 @@ body.is-loading .hero__video {
 
 .form__note {
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--olive);
+  font-family: var(--ui-font);
 }
 
 .rsvp-modal {
   position: fixed;
   inset: 0;
   z-index: 200;
-  display: grid;
-  place-items: center;
+  display: block;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   transition: opacity 300ms var(--ui-ease), visibility 300ms var(--ui-ease);
 }
 
@@ -680,7 +691,7 @@ body.is-loading .hero__video {
 }
 
 .rsvp-modal__backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(18, 27, 16, 0.6);
   backdrop-filter: blur(8px);
@@ -689,16 +700,20 @@ body.is-loading .hero__video {
 .rsvp-modal__dialog {
   position: relative;
   z-index: 1;
-  width: min(92vw, 720px);
-  max-height: min(86vh, 760px);
-  overflow: auto;
-  background: var(--cream);
-  border-radius: var(--r-xl);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: clamp(24px, 3vw, 32px);
-  box-shadow: var(--shadow-2);
+  width: 100%;
+  min-height: 100dvh;
+  max-height: none;
+  overflow: visible;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  padding:
+    calc(env(safe-area-inset-top) + 16px)
+    max(16px, env(safe-area-inset-right))
+    calc(env(safe-area-inset-bottom) + 16px)
+    max(16px, env(safe-area-inset-left));
   display: grid;
-  justify-items: center;
+  align-items: stretch;
   --dialog-duration: 300ms;
   transform: translateY(24px) scale(0.98);
   transition: transform var(--dialog-duration) var(--ui-ease), opacity var(--dialog-duration) var(--ui-ease);
@@ -711,18 +726,27 @@ body.is-loading .hero__video {
   opacity: 1;
 }
 
-.rsvp-modal__dialog h2 {
-  margin-bottom: 8px;
-  letter-spacing: 0.02em;
-  animation: rsvp-step-fade-in 520ms var(--ui-ease) both;
+.rsvp-modal__body {
+  width: min(100%, 620px);
+  min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);
+  margin: 0 auto;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  background: var(--cream);
+  border-radius: var(--r-xl);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-2);
+  padding: clamp(20px, 2.8vw, 30px);
 }
 
 .rsvp-modal__close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 38px;
-  height: 38px;
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 16px);
+  right: calc(env(safe-area-inset-right) + 16px);
+  z-index: 5;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 999px;
   background: #efe9df;
@@ -735,7 +759,7 @@ body.is-loading .hero__video {
 
 .rsvp-modal__close:hover {
   background: #e3dccf;
-  transform: rotate(90deg);
+  transform: none;
 }
 
 .rsvp-modal__close:focus-visible {
@@ -745,6 +769,7 @@ body.is-loading .hero__video {
 
 .field--chips {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .field--chips legend {
@@ -768,15 +793,22 @@ body.is-loading .hero__video {
 
 .field--chips .option__chip {
   width: 100%;
-  min-height: 46px;
+  min-height: 48px;
   border-radius: var(--r-pill);
   background: #f3efe7;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 12px 16px;
+  padding: 0 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  line-height: 1.25;
   transition: transform 160ms var(--ui-ease), box-shadow 160ms var(--ui-ease), background-color 160ms var(--ui-ease), color 160ms var(--ui-ease), border-color 160ms var(--ui-ease);
+}
+
+.field--chips .option:hover .option__chip {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
 }
 
 .field--chips .option input[type="checkbox"]:checked + .option__chip {
@@ -827,10 +859,43 @@ body.is-loading .hero__video {
   .field--chips .option__chip,
   .rsvp-modal__close,
   .rsvp-step.is-active .field--card,
-  .rsvp-step.is-active .rsvp__actions,
-  .rsvp-modal__dialog h2 {
+  .rsvp-step.is-active .rsvp__actions {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .rsvp-modal__dialog {
+    padding:
+      calc(env(safe-area-inset-top) + 12px)
+      max(12px, env(safe-area-inset-right))
+      calc(env(safe-area-inset-bottom) + 12px)
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .rsvp-modal__body {
+    align-content: start;
+    padding-top: 56px;
+    border-radius: 0;
+    width: 100%;
+    min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
+  }
+
+  .rsvp__form {
+    width: min(100%, 560px);
+  }
+
+  .field--chips {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 740px) {
+  .rsvp-modal__body {
+    align-content: start;
+    padding-top: 52px;
+    padding-bottom: 12px;
   }
 }
 

@@ -190,9 +190,9 @@
 
   <div class="rsvp-modal" id="rsvpModal" aria-hidden="true">
     <div class="rsvp-modal__backdrop" data-close-rsvp-modal></div>
-    <div class="rsvp-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rsvpModalTitle">
+    <div class="rsvp-modal__dialog" role="dialog" aria-modal="true" aria-label="Форма підтвердження присутності">
       <button class="rsvp-modal__close" id="closeRsvpModal" type="button" aria-label="Закрити анкету">×</button>
-      <h2 id="rsvpModalTitle">Анкета гостя</h2>
+      <div class="rsvp-modal__body">
       <form class="rsvp__form" id="rsvpForm">
         <div class="rsvp-step is-active" data-step="1">
           <label class="field field--card">
@@ -280,6 +280,7 @@
 
         <div class="form__note" id="rsvpNote" role="status" aria-live="polite"></div>
       </form>
+      </div>
     </div>
   </div>
 

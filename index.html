@@ -154,11 +154,10 @@
 
     <section class="rsvp" id="rsvp">
       <div class="rsvp__container">
-        <h2>Просимо відповісти на декілька запитань:</h2>
+        <h2>просимо відповісти <br>на декілька запитань:</h2>
         <form class="rsvp__form" id="rsvpForm">
           <div class="rsvp-step is-active" data-step="1">
             <label class="field">
-              <span>Ваше ім’я та прізвище</span>
               <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
             </label>
             <div class="rsvp__actions">
@@ -168,15 +167,41 @@
 
           <div class="rsvp-step" data-step="2">
             <fieldset class="field">
-              <legend>Чи плануєте ви бути на весіллі?</legend>
-              <label class="option">
-                <input type="radio" name="attend" value="yes" required />
-                Так
-              </label>
-              <label class="option">
-                <input type="radio" name="attend" value="no" />
-                Ні
-              </label>
+              <legend>Скільки гостей буде з вами?</legend>
+              <div class="guest-counter" data-counter="adults">
+                <span class="guest-counter__label">Дорослі</span>
+                <div class="guest-counter__controls">
+                  <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дорослих">−</button>
+                  <input
+                    class="guest-counter__value"
+                    type="number"
+                    name="adults"
+                    id="adultsCount"
+                    min="0"
+                    max="10"
+                    value="1"
+                    readonly
+                  />
+                  <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дорослих">+</button>
+                </div>
+              </div>
+              <div class="guest-counter" data-counter="kids">
+                <span class="guest-counter__label">Діти</span>
+                <div class="guest-counter__controls">
+                  <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дітей">−</button>
+                  <input
+                    class="guest-counter__value"
+                    type="number"
+                    name="kids"
+                    id="kidsCount"
+                    min="0"
+                    max="10"
+                    value="0"
+                    readonly
+                  />
+                  <button class="guest-counter__btn" type="button" data-counter-action="increase" aria-label="Збільшити кількість дітей">+</button>
+                </div>
+              </div>
             </fieldset>
             <div class="rsvp__actions">
               <button class="btn btn--soft" type="button" data-prev-step="1">Назад</button>
@@ -208,7 +233,7 @@
       <img class="torn" src="assets/torn-top.svg" alt="" aria-hidden="true" />
       <div class="countdown__bg" aria-hidden="true"></div>
       <div class="countdown__content">
-        <h2>Чекаємо на вас через:</h2>
+        <h2>чекаємо на вас через:</h2>
         <div class="timer">
           <div class="timer__unit">
             <span class="timer__value" id="days">199</span>

@@ -9,6 +9,7 @@ const minutesLabelEl = document.getElementById("minutesLabel");
 const secondsLabelEl = document.getElementById("secondsLabel");
 
 function setScreenHeight() {
+  if (document.body.classList.contains("is-form-active")) return;
   const viewportHeight = window.visualViewport?.height || window.innerHeight;
   document.documentElement.style.setProperty("--screen-height", `${Math.round(viewportHeight)}px`);
 }
@@ -81,6 +82,7 @@ const rsvpNote = document.getElementById("rsvpNote");
 
 if (rsvpForm) {
   const steps = Array.from(rsvpForm.querySelectorAll(".rsvp-step"));
+  const guestCounters = Array.from(rsvpForm.querySelectorAll(".guest-counter"));
   let currentStep = 0;
 
   const setStep = (index) => {
@@ -99,10 +101,11 @@ if (rsvpForm) {
     }
 
     if (stepIndex === 1) {
-      const attendSelected = rsvpForm.querySelector('input[name="attend"]:checked');
-      if (attendSelected) return true;
+      const adultsCount = Number(rsvpForm.elements.adults?.value || 0);
+      const kidsCount = Number(rsvpForm.elements.kids?.value || 0);
+      if (adultsCount + kidsCount >= 1) return true;
       if (rsvpNote) {
-        rsvpNote.textContent = "Оберіть, будь ласка, чи плануєте бути на весіллі.";
+        rsvpNote.textContent = "Вкажіть, будь ласка, кількість гостей.";
       }
       return false;
     }
@@ -111,8 +114,27 @@ if (rsvpForm) {
   };
 
   rsvpForm.addEventListener("click", (event) => {
+    const counterButton = event.target.closest("[data-counter-action]");
     const nextButton = event.target.closest("[data-next-step]");
     const prevButton = event.target.closest("[data-prev-step]");
+
+    if (counterButton) {
+      const action = counterButton.dataset.counterAction;
+      const counter = counterButton.closest(".guest-counter");
+      const input = counter?.querySelector(".guest-counter__value");
+      if (!input) return;
+
+      const min = Number(input.min || 0);
+      const max = Number(input.max || 10);
+      const current = Number(input.value || 0);
+      const nextValue =
+        action === "increase"
+          ? Math.min(max, current + 1)
+          : Math.max(min, current - 1);
+
+      input.value = String(nextValue);
+      return;
+    }
 
     if (nextButton) {
       if (!validateStep(currentStep)) return;
@@ -148,8 +170,15 @@ if (rsvpForm) {
       const activeInsideForm = document.activeElement && rsvpForm.contains(document.activeElement);
       if (!activeInsideForm) {
         document.body.classList.remove("is-form-active");
+        setScreenHeight();
       }
     }, 0);
+  });
+
+  guestCounters.forEach((counter) => {
+    const input = counter.querySelector(".guest-counter__value");
+    if (!input) return;
+    input.setAttribute("aria-live", "polite");
   });
 }
 

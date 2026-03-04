@@ -187,10 +187,8 @@ if (slideNextBtn) {
   slideNextBtn.addEventListener("click", () => {
     const targetSlide = getNextSlide();
     if (targetSlide) {
-      const targetTop =
-        targetSlide.offsetTop + targetSlide.offsetHeight / 2 - window.innerHeight / 2;
       window.scrollTo({
-        top: Math.max(0, Math.round(targetTop)),
+        top: Math.max(0, Math.round(targetSlide.offsetTop)),
         behavior: "smooth",
       });
     }

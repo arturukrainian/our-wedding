@@ -80,12 +80,76 @@ const rsvpForm = document.getElementById("rsvpForm");
 const rsvpNote = document.getElementById("rsvpNote");
 
 if (rsvpForm) {
+  const steps = Array.from(rsvpForm.querySelectorAll(".rsvp-step"));
+  let currentStep = 0;
+
+  const setStep = (index) => {
+    currentStep = Math.max(0, Math.min(index, steps.length - 1));
+    steps.forEach((step, stepIndex) => {
+      step.classList.toggle("is-active", stepIndex === currentStep);
+    });
+  };
+
+  const validateStep = (stepIndex) => {
+    if (stepIndex === 0) {
+      const nameInput = rsvpForm.elements.name;
+      if (!nameInput || nameInput.checkValidity()) return true;
+      nameInput.reportValidity();
+      return false;
+    }
+
+    if (stepIndex === 1) {
+      const attendSelected = rsvpForm.querySelector('input[name="attend"]:checked');
+      if (attendSelected) return true;
+      if (rsvpNote) {
+        rsvpNote.textContent = "Оберіть, будь ласка, чи плануєте бути на весіллі.";
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  rsvpForm.addEventListener("click", (event) => {
+    const nextButton = event.target.closest("[data-next-step]");
+    const prevButton = event.target.closest("[data-prev-step]");
+
+    if (nextButton) {
+      if (!validateStep(currentStep)) return;
+      if (rsvpNote) rsvpNote.textContent = "";
+      const targetStep = Number(nextButton.dataset.nextStep) - 1;
+      setStep(targetStep);
+      return;
+    }
+
+    if (prevButton) {
+      if (rsvpNote) rsvpNote.textContent = "";
+      const targetStep = Number(prevButton.dataset.prevStep) - 1;
+      setStep(targetStep);
+    }
+  });
+
   rsvpForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (!validateStep(currentStep)) return;
     if (rsvpNote) {
       rsvpNote.textContent = "Дякуємо! Ми отримали вашу відповідь.";
     }
     rsvpForm.reset();
+    setStep(0);
+  });
+
+  rsvpForm.addEventListener("focusin", () => {
+    document.body.classList.add("is-form-active");
+  });
+
+  rsvpForm.addEventListener("focusout", () => {
+    window.setTimeout(() => {
+      const activeInsideForm = document.activeElement && rsvpForm.contains(document.activeElement);
+      if (!activeInsideForm) {
+        document.body.classList.remove("is-form-active");
+      }
+    }, 0);
   });
 }
 

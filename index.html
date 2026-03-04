@@ -156,33 +156,49 @@
       <div class="rsvp__container">
         <h2>Просимо відповісти на декілька запитань:</h2>
         <form class="rsvp__form" id="rsvpForm">
-          <label class="field">
-            <span>Ваше ім’я та прізвище</span>
-            <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
-          </label>
-
-          <fieldset class="field">
-            <legend>Чи плануєте ви бути на весіллі?</legend>
-            <label class="option">
-              <input type="radio" name="attend" value="yes" required />
-              Так
+          <div class="rsvp-step is-active" data-step="1">
+            <label class="field">
+              <span>Ваше ім’я та прізвище</span>
+              <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
             </label>
-            <label class="option">
-              <input type="radio" name="attend" value="no" />
-              Ні
-            </label>
-          </fieldset>
+            <div class="rsvp__actions">
+              <button class="btn" type="button" data-next-step="2">Далі</button>
+            </div>
+          </div>
 
-          <fieldset class="field">
-            <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
-            <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
-            <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>
-            <label class="option"><input type="checkbox" name="drink" value="wine" /> Вино</label>
-            <label class="option"><input type="checkbox" name="drink" value="champagne" /> Шампанське</label>
-            <label class="option"><input type="checkbox" name="drink" value="vodka" /> Горілка</label>
-          </fieldset>
+          <div class="rsvp-step" data-step="2">
+            <fieldset class="field">
+              <legend>Чи плануєте ви бути на весіллі?</legend>
+              <label class="option">
+                <input type="radio" name="attend" value="yes" required />
+                Так
+              </label>
+              <label class="option">
+                <input type="radio" name="attend" value="no" />
+                Ні
+              </label>
+            </fieldset>
+            <div class="rsvp__actions">
+              <button class="btn btn--soft" type="button" data-prev-step="1">Назад</button>
+              <button class="btn" type="button" data-next-step="3">Далі</button>
+            </div>
+          </div>
 
-          <button class="btn" type="submit">Відправити</button>
+          <div class="rsvp-step" data-step="3">
+            <fieldset class="field">
+              <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
+              <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
+              <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>
+              <label class="option"><input type="checkbox" name="drink" value="wine" /> Вино</label>
+              <label class="option"><input type="checkbox" name="drink" value="champagne" /> Шампанське</label>
+              <label class="option"><input type="checkbox" name="drink" value="vodka" /> Горілка</label>
+            </fieldset>
+            <div class="rsvp__actions">
+              <button class="btn btn--soft" type="button" data-prev-step="2">Назад</button>
+              <button class="btn" type="submit">Відправити</button>
+            </div>
+          </div>
+
           <div class="form__note" id="rsvpNote" role="status" aria-live="polite"></div>
         </form>
       </div>

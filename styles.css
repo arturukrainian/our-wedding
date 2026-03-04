@@ -26,6 +26,10 @@ body {
   scroll-snap-type: y proximity;
 }
 
+body.is-form-active {
+  scroll-snap-type: none;
+}
+
 body.is-loading {
   overflow: hidden;
 }
@@ -389,11 +393,31 @@ body.is-loading .hero__video {
 
 .rsvp__form {
   display: grid;
-  gap: 22px;
+  gap: 16px;
   margin-top: 32px;
   text-align: center;
   justify-items: center;
   width: min(92vw, 700px);
+  min-height: 360px;
+  align-content: start;
+}
+
+.rsvp-step {
+  width: 100%;
+  display: none;
+  gap: 20px;
+  justify-items: center;
+}
+
+.rsvp-step.is-active {
+  display: grid;
+}
+
+.rsvp__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .field {
@@ -440,6 +464,10 @@ input[type="text"] {
 
 .btn--outline {
   border: 2px solid var(--cream);
+}
+
+.btn--soft {
+  background: #ece6d6;
 }
 
 .form__note {

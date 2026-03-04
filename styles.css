@@ -340,7 +340,9 @@ body.is-loading .hero__video {
 
 @media (prefers-reduced-motion: reduce) {
   .invite .script,
-  .invite__container > p {
+  .invite__container > p,
+  .wishes .script,
+  .wishes__container > p {
     opacity: 1;
     transform: none;
     transition: none;
@@ -489,14 +491,14 @@ input[type="text"] {
 .timer {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(8px, 2vw, 22px);
-  margin-top: 30px;
+  gap: clamp(6px, 1.2vw, 14px);
+  margin-top: 16px;
 }
 
 .timer__unit {
   display: grid;
-  gap: 6px;
-  padding: 8px 4px;
+  gap: 3px;
+  padding: 4px 2px;
 }
 
 .timer__value {
@@ -513,7 +515,7 @@ input[type="text"] {
 
 .wishes {
   position: relative;
-  color: var(--cream);
+  color: var(--forest);
   overflow: hidden;
 }
 
@@ -521,10 +523,7 @@ input[type="text"] {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(20, 36, 17, 0.45) 0%, rgba(20, 36, 17, 0.68) 100%),
-    url("suggest.jpg") center/cover no-repeat;
-  filter: saturate(0.92);
+  background: url("suggest.jpg") center/cover no-repeat;
 }
 
 .wishes__container {
@@ -533,7 +532,41 @@ input[type="text"] {
 }
 
 .wishes .script {
-  color: var(--cream);
+  color: var(--forest);
+}
+
+.wishes__container > p {
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.72;
+}
+
+.wishes__container > p + p {
+  margin-top: 24px;
+}
+
+.wishes .script,
+.wishes__container > p {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.wishes.is-visible .script,
+.wishes.is-visible .wishes__container > p {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.wishes.is-visible .script {
+  transition: opacity 800ms ease, transform 800ms ease;
+}
+
+.wishes.is-visible .wishes__container > p:first-of-type {
+  transition: opacity 700ms ease 250ms, transform 700ms ease 250ms;
+}
+
+.wishes.is-visible .wishes__container > p:nth-of-type(2) {
+  transition: opacity 700ms ease 450ms, transform 700ms ease 450ms;
 }
 
 .schedule {

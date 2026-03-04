@@ -97,6 +97,7 @@ const preloader = document.getElementById("preloader");
 const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
 const rings = document.getElementById("rings");
 const inviteSection = document.getElementById("invite");
+const wishesSection = document.getElementById("wishes");
 const calendarSection = document.getElementById("calendar");
 const dressCodeImg = document.querySelector(".dress-code-img");
 let shouldPlayMusic = true;
@@ -221,6 +222,29 @@ if (inviteSection) {
     );
 
     inviteObserver.observe(inviteSection);
+  }
+}
+
+if (wishesSection) {
+  const reducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    wishesSection.classList.add("is-visible");
+  } else {
+    const wishesObserver = new IntersectionObserver(
+      (entries, observer) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        wishesSection.classList.add("is-visible");
+        observer.disconnect();
+      },
+      {
+        threshold: 0.45,
+      }
+    );
+
+    wishesObserver.observe(wishesSection);
   }
 }
 

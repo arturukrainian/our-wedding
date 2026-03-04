@@ -480,46 +480,54 @@ body.is-loading .hero__video {
 }
 
 .rsvp-modal .field--card {
-  background: #f4f1ea;
-  border-radius: var(--r-xl);
-  padding: clamp(20px, 2.8vw, 28px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
   gap: var(--s-3);
 }
 
 .rsvp-modal input[type="text"] {
   width: 100%;
-  max-width: 480px;
-  padding: 17px 21px;
-  border-radius: var(--r-lg);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  font-size: 16px;
-  background: #f3efe7;
-  color: var(--forest);
-  font-family: var(--ui-font);
-  transition: box-shadow 200ms var(--ui-ease), background-color 200ms var(--ui-ease);
+  max-width: 520px;
+  padding: 0 0 10px;
+  border: none;
+  border-bottom: 1px solid rgba(30, 31, 26, 0.45);
+  border-radius: 0;
+  font-size: clamp(22px, 3.2vw, 44px);
+  background: transparent;
+  color: var(--ink);
+  font-family: "Cormorant Garamond", serif;
+  text-align: center;
+  line-height: 1.05;
+  transition: box-shadow 200ms var(--ui-ease), border-color 200ms var(--ui-ease);
 }
 
 .rsvp-modal input[type="text"]::placeholder {
-  opacity: 0.55;
+  opacity: 1;
+  color: rgba(30, 31, 26, 0.82);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(22px, 3.2vw, 44px);
+  line-height: 1.05;
 }
 
 .rsvp-modal input[type="text"]:focus {
   outline: none;
-  background: #ffffff;
-  box-shadow: 0 0 0 2px var(--accent), var(--shadow-1);
+  border-bottom-color: var(--accent);
+  box-shadow: inset 0 -1px 0 var(--accent);
 }
 
 .rsvp-modal input[type="text"].is-invalid {
-  box-shadow: 0 0 0 2px rgba(190, 70, 70, 0.5);
+  border-bottom-color: rgba(190, 70, 70, 0.7);
+  box-shadow: inset 0 -1px 0 rgba(190, 70, 70, 0.7);
 }
 
 .field__help {
-  min-height: 14px;
+  min-height: 16px;
   font-size: 12px;
   line-height: 1.2;
   color: rgba(190, 70, 70, 0.9);
-  font-family: var(--ui-font);
+  font-family: "Cormorant Garamond", serif;
 }
 
 .option {
@@ -621,6 +629,9 @@ body.is-loading .hero__video {
   cursor: pointer;
   justify-self: center;
   text-decoration: none;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  text-transform: lowercase;
   transition: transform 180ms var(--ui-ease), box-shadow 180ms var(--ui-ease), opacity 180ms var(--ui-ease);
 }
 
@@ -713,7 +724,7 @@ body.is-loading .hero__video {
     calc(env(safe-area-inset-bottom) + 16px)
     max(16px, env(safe-area-inset-left));
   display: grid;
-  align-items: stretch;
+  place-items: center;
   --dialog-duration: 300ms;
   transform: translateY(24px) scale(0.98);
   transition: transform var(--dialog-duration) var(--ui-ease), opacity var(--dialog-duration) var(--ui-ease);
@@ -727,17 +738,17 @@ body.is-loading .hero__video {
 }
 
 .rsvp-modal__body {
-  width: min(100%, 620px);
+  width: min(100%, 1160px);
   min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);
   margin: 0 auto;
   display: grid;
   align-content: center;
   justify-items: center;
   background: var(--cream);
-  border-radius: var(--r-xl);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: var(--shadow-2);
-  padding: clamp(20px, 2.8vw, 30px);
+  border-radius: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: none;
+  padding: clamp(20px, 2.8vw, 42px);
 }
 
 .rsvp-modal__close {
@@ -748,18 +759,17 @@ body.is-loading .hero__video {
   width: 44px;
   height: 44px;
   border: 0;
-  border-radius: 999px;
-  background: #efe9df;
+  border-radius: 0;
+  background: transparent;
   color: var(--forest);
-  font-size: 28px;
+  font-size: 52px;
   line-height: 1;
   cursor: pointer;
-  transition: transform 180ms var(--ui-ease), background-color 180ms var(--ui-ease), box-shadow 180ms var(--ui-ease);
+  transition: opacity 180ms var(--ui-ease), box-shadow 180ms var(--ui-ease);
 }
 
 .rsvp-modal__close:hover {
-  background: #e3dccf;
-  transform: none;
+  opacity: 0.72;
 }
 
 .rsvp-modal__close:focus-visible {
@@ -875,11 +885,11 @@ body.is-loading .hero__video {
   }
 
   .rsvp-modal__body {
-    align-content: start;
-    padding-top: 56px;
+    align-content: center;
     border-radius: 0;
     width: 100%;
     min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
+    padding: 52px 18px 26px;
   }
 
   .rsvp__form {
@@ -893,9 +903,9 @@ body.is-loading .hero__video {
 
 @media (max-height: 740px) {
   .rsvp-modal__body {
-    align-content: start;
+    align-content: center;
     padding-top: 52px;
-    padding-bottom: 12px;
+    padding-bottom: 22px;
   }
 }
 

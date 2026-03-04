@@ -193,10 +193,14 @@
     <div class="rsvp-modal__dialog" role="dialog" aria-modal="true" aria-label="Форма підтвердження присутності">
       <button class="rsvp-modal__close" id="closeRsvpModal" type="button" aria-label="Закрити анкету">×</button>
       <div class="rsvp-modal__body">
-      <form class="rsvp__form" id="rsvpForm">
+      <form
+        class="rsvp__form"
+        id="rsvpForm"
+        data-telegram-endpoint="https://billowing-bird-919b.artur-ukrainian.workers.dev"
+      >
         <div class="rsvp-step is-active" data-step="1">
           <label class="field field--card">
-            <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
+            <input type="text" name="name" placeholder="ваше ім’я та прізвище" required />
             <span class="field__help" id="nameError" aria-live="polite"></span>
           </label>
           <div class="rsvp__actions">
@@ -206,9 +210,9 @@
 
         <div class="rsvp-step" data-step="2">
           <fieldset class="field field--card">
-            <legend>Скільки гостей буде з вами?</legend>
+            <legend>скільки гостей буде разом з вами?</legend>
             <div class="guest-counter" data-counter="adults">
-              <span class="guest-counter__label">Дорослі</span>
+              <span class="guest-counter__label">дорослі</span>
               <div class="guest-counter__controls">
                 <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дорослих">−</button>
                 <input
@@ -217,7 +221,7 @@
                   name="adults"
                   id="adultsCount"
                   inputmode="numeric"
-                  value="1"
+                  value="2"
                   readonly
                   aria-live="polite"
                 />
@@ -225,7 +229,7 @@
               </div>
             </div>
             <div class="guest-counter" data-counter="kids">
-              <span class="guest-counter__label">Діти</span>
+              <span class="guest-counter__label">діти</span>
               <div class="guest-counter__controls">
                 <button class="guest-counter__btn" type="button" data-counter-action="decrease" aria-label="Зменшити кількість дітей">−</button>
                 <input
@@ -234,7 +238,7 @@
                   name="kids"
                   id="kidsCount"
                   inputmode="numeric"
-                  value="0"
+                  value="1"
                   readonly
                   aria-live="polite"
                 />
@@ -250,26 +254,26 @@
 
         <div class="rsvp-step" data-step="3">
           <fieldset class="field field--card field--chips">
-            <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
+            <legend>вкажіть ваші побажання по алкогольним напоям:</legend>
             <label class="option">
-              <input type="checkbox" name="drink" value="whiskey" />
-              <span class="option__chip">Віскі</span>
-            </label>
-            <label class="option">
-              <input type="checkbox" name="drink" value="rum" />
-              <span class="option__chip">Ром</span>
+              <input type="checkbox" name="drink" value="champagne" />
+              <span class="option__chip">Шампанське</span>
             </label>
             <label class="option">
               <input type="checkbox" name="drink" value="wine" />
               <span class="option__chip">Вино</span>
             </label>
             <label class="option">
-              <input type="checkbox" name="drink" value="champagne" />
-              <span class="option__chip">Шампанське</span>
+              <input type="checkbox" name="drink" value="whiskey" />
+              <span class="option__chip">Віскі</span>
             </label>
             <label class="option">
               <input type="checkbox" name="drink" value="vodka" />
               <span class="option__chip">Горілка</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="drink" value="rum" />
+              <span class="option__chip">Ром</span>
             </label>
           </fieldset>
           <div class="rsvp__actions">

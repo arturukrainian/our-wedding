@@ -83,31 +83,119 @@ const nameErrorEl = document.getElementById("nameError");
 const rsvpModal = document.getElementById("rsvpModal");
 const openRsvpModalBtn = document.getElementById("openRsvpModal");
 const closeRsvpModalBtn = document.getElementById("closeRsvpModal");
+const RSVP_SUBMIT_ANIMATION_MS = 1100;
+const RSVP_MODAL_FADE_MS = 360;
+const RSVP_REQUEST_TIMEOUT_MS = 12000;
 
 if (rsvpForm) {
   const steps = Array.from(rsvpForm.querySelectorAll(".rsvp-step"));
   const guestCounters = Array.from(rsvpForm.querySelectorAll(".guest-counter"));
+  const telegramEndpoint = (rsvpForm.dataset.telegramEndpoint || "").trim();
   let currentStep = 0;
+
+  const wait = (ms) =>
+    new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+
+  const getRsvpPayload = () => {
+    const name = String(rsvpForm.elements.name?.value || "").trim();
+    const adults = Number(rsvpForm.elements.adults?.value || 0);
+    const kids = Number(rsvpForm.elements.kids?.value || 0);
+    const drinks = Array.from(
+      rsvpForm.querySelectorAll('input[name="drink"]:checked')
+    ).map((input) => input.value);
+
+    return {
+      name,
+      adults,
+      kids,
+      drinks,
+      submittedAt: new Date().toISOString(),
+    };
+  };
+
+  const sendRsvpToTelegram = async (payload) => {
+    if (!telegramEndpoint) {
+      throw new Error("Telegram endpoint is not configured");
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+    }, RSVP_REQUEST_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(telegramEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Telegram request failed: ${response.status}`);
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  };
+
+  const resetRsvpUiState = () => {
+    rsvpForm.dataset.submitting = "0";
+    rsvpForm.querySelectorAll("button").forEach((button) => {
+      button.disabled = false;
+    });
+    if (rsvpNote) {
+      rsvpNote.textContent = "";
+      rsvpNote.classList.remove("is-visible", "is-sending", "is-sent");
+    }
+  };
+
+  const scrollToCountdown = () => {
+    if (!countdownEl) return;
+    const targetTop =
+      countdownEl.offsetTop + countdownEl.offsetHeight / 2 - window.innerHeight / 2;
+    window.scrollTo({
+      top: Math.max(0, Math.round(targetTop)),
+      behavior: "smooth",
+    });
+  };
 
   const openRsvpModal = () => {
     if (!rsvpModal) return;
+    rsvpModal.classList.remove("is-closing");
     rsvpModal.classList.add("is-open");
     rsvpModal.setAttribute("aria-hidden", "false");
     document.body.classList.add("is-rsvp-open");
     document.body.classList.add("is-form-active");
+    resetRsvpUiState();
     const firstInput = rsvpForm.querySelector('input[name="name"]');
     window.setTimeout(() => {
       firstInput?.focus({ preventScroll: true });
     }, 60);
   };
 
-  const closeRsvpModal = () => {
+  const closeRsvpModal = ({ animate = false, onClosed } = {}) => {
     if (!rsvpModal) return;
-    rsvpModal.classList.remove("is-open");
-    rsvpModal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("is-rsvp-open");
-    document.body.classList.remove("is-form-active");
-    setScreenHeight();
+    const finalize = () => {
+      rsvpModal.classList.remove("is-open", "is-closing");
+      rsvpModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("is-rsvp-open");
+      document.body.classList.remove("is-form-active");
+      setScreenHeight();
+      if (typeof onClosed === "function") onClosed();
+    };
+
+    if (!animate) {
+      finalize();
+      return;
+    }
+
+    rsvpModal.classList.add("is-closing");
+    window.setTimeout(finalize, RSVP_MODAL_FADE_MS);
   };
 
   const setStep = (index) => {
@@ -196,17 +284,52 @@ if (rsvpForm) {
   rsvpForm.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!validateStep(currentStep)) return;
+    if (rsvpForm.dataset.submitting === "1") return;
+    rsvpForm.dataset.submitting = "1";
+    rsvpForm.querySelectorAll("button").forEach((button) => {
+      button.disabled = true;
+    });
+
     if (rsvpNote) {
-      rsvpNote.textContent = "Дякуємо! Ми отримали вашу відповідь.";
+      rsvpNote.classList.add("is-visible", "is-sending");
+      rsvpNote.classList.remove("is-sent");
+      rsvpNote.textContent = "Відправляємо анкету";
     }
-    window.setTimeout(() => {
-      rsvpForm.reset();
-      setStep(0);
-      if (rsvpNote) {
-        rsvpNote.textContent = "";
-      }
-      closeRsvpModal();
-    }, 900);
+
+    const payload = getRsvpPayload();
+
+    Promise.all([sendRsvpToTelegram(payload), wait(RSVP_SUBMIT_ANIMATION_MS)])
+      .then(() => {
+        if (rsvpNote) {
+          rsvpNote.classList.remove("is-sending");
+          rsvpNote.classList.add("is-sent");
+          rsvpNote.textContent = "Анкета відправлена!";
+        }
+
+        closeRsvpModal({
+          animate: true,
+          onClosed: () => {
+            rsvpForm.reset();
+            setStep(0);
+            resetRsvpUiState();
+            scrollToCountdown();
+          },
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        rsvpForm.dataset.submitting = "0";
+        rsvpForm.querySelectorAll("button").forEach((button) => {
+          button.disabled = false;
+        });
+        if (rsvpNote) {
+          rsvpNote.classList.remove("is-sending", "is-sent");
+          rsvpNote.classList.add("is-visible");
+          rsvpNote.textContent = telegramEndpoint
+            ? "Не вдалося відправити анкету. Спробуйте ще раз."
+            : "Не налаштовано Telegram endpoint.";
+        }
+      });
   });
 
   rsvpForm.addEventListener("focusin", () => {

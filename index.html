@@ -195,8 +195,9 @@
       <h2 id="rsvpModalTitle">Анкета гостя</h2>
       <form class="rsvp__form" id="rsvpForm">
         <div class="rsvp-step is-active" data-step="1">
-          <label class="field">
+          <label class="field field--card">
             <input type="text" name="name" placeholder="Ваше ім’я та прізвище" required />
+            <span class="field__help" id="nameError" aria-live="polite"></span>
           </label>
           <div class="rsvp__actions">
             <button class="btn" type="button" data-next-step="2">Далі</button>
@@ -204,7 +205,7 @@
         </div>
 
         <div class="rsvp-step" data-step="2">
-          <fieldset class="field">
+          <fieldset class="field field--card">
             <legend>Скільки гостей буде з вами?</legend>
             <div class="guest-counter" data-counter="adults">
               <span class="guest-counter__label">Дорослі</span>
@@ -248,7 +249,7 @@
         </div>
 
         <div class="rsvp-step" data-step="3">
-          <fieldset class="field">
+          <fieldset class="field field--card field--chips">
             <legend>Вкажіть ваші побажання по алкогольним напоям:</legend>
             <label class="option"><input type="checkbox" name="drink" value="whiskey" /> Віскі</label>
             <label class="option"><input type="checkbox" name="drink" value="rum" /> Ром</label>

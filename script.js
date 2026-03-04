@@ -79,6 +79,7 @@ updateCountdown();
 
 const rsvpForm = document.getElementById("rsvpForm");
 const rsvpNote = document.getElementById("rsvpNote");
+const nameErrorEl = document.getElementById("nameError");
 const rsvpModal = document.getElementById("rsvpModal");
 const openRsvpModalBtn = document.getElementById("openRsvpModal");
 const closeRsvpModalBtn = document.getElementById("closeRsvpModal");
@@ -95,7 +96,9 @@ if (rsvpForm) {
     document.body.classList.add("is-rsvp-open");
     document.body.classList.add("is-form-active");
     const firstInput = rsvpForm.querySelector('input[name="name"]');
-    firstInput?.focus({ preventScroll: true });
+    window.setTimeout(() => {
+      firstInput?.focus({ preventScroll: true });
+    }, 60);
   };
 
   const closeRsvpModal = () => {
@@ -117,7 +120,15 @@ if (rsvpForm) {
   const validateStep = (stepIndex) => {
     if (stepIndex === 0) {
       const nameInput = rsvpForm.elements.name;
-      if (!nameInput || nameInput.checkValidity()) return true;
+      if (!nameInput || nameInput.checkValidity()) {
+        nameInput?.classList.remove("is-invalid");
+        if (nameErrorEl) nameErrorEl.textContent = "";
+        return true;
+      }
+      nameInput.classList.add("is-invalid");
+      if (nameErrorEl) {
+        nameErrorEl.textContent = "Вкажіть, будь ласка, ім’я та прізвище.";
+      }
       nameInput.reportValidity();
       return false;
     }
@@ -173,6 +184,15 @@ if (rsvpForm) {
     }
   });
 
+  rsvpForm.elements.name?.addEventListener("input", () => {
+    const nameInput = rsvpForm.elements.name;
+    if (!nameInput) return;
+    if (nameInput.checkValidity()) {
+      nameInput.classList.remove("is-invalid");
+      if (nameErrorEl) nameErrorEl.textContent = "";
+    }
+  });
+
   rsvpForm.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!validateStep(currentStep)) return;
@@ -211,6 +231,8 @@ if (rsvpForm) {
 
   openRsvpModalBtn?.addEventListener("click", () => {
     if (rsvpNote) rsvpNote.textContent = "";
+    if (nameErrorEl) nameErrorEl.textContent = "";
+    rsvpForm.elements.name?.classList.remove("is-invalid");
     setStep(0);
     openRsvpModal();
   });

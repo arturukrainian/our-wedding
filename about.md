@@ -39,7 +39,7 @@
 
 ## 5) Dress Code (поточна домовленість)
 - Секція використовує **локальне** зображення:
-  - `dress-code.png` (в `index.html` через `<img>`).
+  - `dress-code.jpg` (в `index.html` через `<img>`).
 - Вимоги:
   - без обрізання зображення,
   - `width: 100%`,
@@ -48,7 +48,7 @@
 - Секція має фон-заповнення:
   - `#F7F3E8`.
 - Зображення прелоадиться завчасно:
-  - `<link rel="preload" as="image" href="dress-code.png">`,
+  - `<link rel="preload" as="image" href="dress-code.jpg">`,
   - `loading="eager"`, `fetchpriority="high"`.
 
 ## 6) Фони секцій (узгоджені файли)

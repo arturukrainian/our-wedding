@@ -641,6 +641,7 @@ if (calendarSection) {
 const PRELOADER_MEDIA_FALLBACK_MS = 10000;
 const DRESS_IMAGE_PRELOAD_TIMEOUT_MS = 4500;
 const AUDIO_READY_BUFFER_RATIO = 0.08;
+const AUDIO_READY_TIMEOUT_MS = 12000;
 const PRELOADER_TEXT_LINES = [
   "Ми дуже довго чекали на цей день",
   "і бажаємо розділити його саме з Вами.",
@@ -755,6 +756,7 @@ const waitForAudioReady = () =>
     }
 
     let settled = false;
+    let timeoutId;
 
     const cleanup = () => {
       bgMusic.removeEventListener("canplay", onReady);
@@ -763,6 +765,7 @@ const waitForAudioReady = () =>
       bgMusic.removeEventListener("durationchange", onReady);
       bgMusic.removeEventListener("progress", onReady);
       bgMusic.removeEventListener("error", onError);
+      window.clearTimeout(timeoutId);
     };
 
     const finish = (reason) => {
@@ -788,6 +791,9 @@ const waitForAudioReady = () =>
     bgMusic.addEventListener("durationchange", onReady);
     bgMusic.addEventListener("progress", onReady);
     bgMusic.addEventListener("error", onError, { once: true });
+    timeoutId = window.setTimeout(() => {
+      finish("timeout");
+    }, AUDIO_READY_TIMEOUT_MS);
   });
 
 if (bgMusic && musicToggle) {
@@ -913,7 +919,7 @@ const initPreloaderWelcome = () => {
 
   const updateFallbackNotice = () => {
     if (!preloaderFallback) return;
-    if (state.fallbackShown && !isMediaReady() && !state.closing) {
+    if (state.fallbackShown && !state.videoReady && !state.closing) {
       preloaderFallback.textContent = "Медіа завантажуються трохи довше, ніж очікувалось...";
       preloaderFallback.classList.add("is-visible");
       return;
@@ -984,6 +990,10 @@ const initPreloaderWelcome = () => {
   waitForAudioReady().then((audioState) => {
     if (audioState === "error") {
       console.warn("Background audio readiness error.");
+      state.audioReady = true;
+    } else if (audioState === "timeout") {
+      console.warn("Background audio readiness timeout. Continuing with click-to-play.");
+      state.audioReady = true;
     } else {
       state.audioReady = true;
     }

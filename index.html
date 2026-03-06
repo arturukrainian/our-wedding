@@ -13,14 +13,32 @@
 <body>
   <div class="preloader" id="preloader" aria-hidden="true">
     <div class="preloader__inner">
-      <div class="preloader__date">26 / 6 / 26</div>
-      <div class="preloader__rings rings" id="rings" aria-hidden="true">
-        <div class="ring ring--left"></div>
-        <div class="ring ring--right"></div>
+      <div class="preloader__top">
+        <div class="preloader__date">26 / 6 / 26</div>
       </div>
-      <button class="preloader__music-btn is-hidden" id="preloaderMusicBtn" type="button">
-        УВІМКНУТИ МУЗИКУ
-      </button>
+
+      <div class="preloader__center">
+        <div class="preloader__phrases" id="preloaderPhrase" aria-live="polite"></div>
+      </div>
+
+      <div class="preloader__actions">
+        <div class="preloader__cta-wrap">
+          <button class="preloader__cta is-loading" id="preloaderStartBtn" type="button" disabled>
+            <span class="preloader__cta-label" id="preloaderStartLabel">Завантаження...</span>
+            <span class="preloader__cta-progress" aria-hidden="true">
+              <span class="preloader__cta-progress-fill"></span>
+            </span>
+          </button>
+        </div>
+        <p class="preloader__fallback" id="preloaderFallback" aria-live="polite"></p>
+      </div>
+
+      <div class="preloader__bottom">
+        <div class="preloader__rings rings" id="rings" aria-hidden="true">
+          <div class="ring ring--left"></div>
+          <div class="ring ring--right"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -121,17 +139,17 @@
         <h2 class="script">Програма дня</h2>
         <div class="timeline">
           <div class="timeline__item">
-            <div class="timeline__time">15:30</div>
+            <div class="timeline__time">14:00</div>
             <div class="timeline__icon">🥂</div>
             <div class="timeline__label">Збір гостей</div>
           </div>
           <div class="timeline__item">
-            <div class="timeline__time">16:00</div>
+            <div class="timeline__time">15:00</div>
             <div class="timeline__icon">💍</div>
             <div class="timeline__label">Церемонія</div>
           </div>
           <div class="timeline__item">
-            <div class="timeline__time">16:30</div>
+            <div class="timeline__time">16:00</div>
             <div class="timeline__icon">🍽️</div>
             <div class="timeline__label">Банкет</div>
           </div>
@@ -143,19 +161,21 @@
       <div class="wishes__container">
         <h2 class="script">Побажання</h2>
         <p>
-          Просимо вас не дарувати нам квіти, ми не встигнемо насолодитися їх красою.
+          Просимо вас не дарувати нам квіти — ми не встигнемо насолодитися їх красою.
         </p>
         <p>
-          Приємним компліментом для нас буде, якщо ви замість квітів вирішите
-          подарувати нам пляшку алкогольного напою для нашої колекції.
+          Натомість будемо раді, якщо замість квітів ви подаруєте вінілову платівку, яка асоціюється з нами або нагадує вам про нас.
+        </p>
+        <p>
+          Ми з любов’ю збиратимемо ці платівки у нашу сімейну музичну колекцію.
         </p>
       </div>
     </section>
 
     <section class="rsvp" id="rsvp">
       <div class="rsvp__container">
-        <h2>просимо відповісти <br>на декілька запитань:</h2>
-        <button class="btn" id="openRsvpModal" type="button">Відкрити анкету</button>
+        <h2>Будемо вдячні, якщо ви<br>відповісте на кілька запитань</h2>
+        <button class="btn" id="openRsvpModal" type="button">ВІДКРИТИ АНКЕТУ</button>
       </div>
     </section>
 
@@ -288,7 +308,7 @@
     </div>
   </div>
 
-  <audio id="bgMusic" autoplay loop preload="auto" playsinline>
+  <audio id="bgMusic" loop preload="auto" playsinline>
     <source src="sound.AAC" type="audio/aac" />
     <source src="sound.MP3" type="audio/mpeg" />
   </audio>
@@ -300,6 +320,10 @@
   <button class="slide-next" id="slideNext" type="button" aria-label="Наступний блок">
     ↓
   </button>
+
+  <div class="slide-next-hint" id="slideNextHint" role="status" aria-live="polite">
+    Для кращого ефекту використовуйте кнопку ↓
+  </div>
 
   <script src="script.js"></script>
 </body>

@@ -377,29 +377,30 @@ if (rsvpForm) {
 }
 
 const slideNextBtn = document.getElementById("slideNext");
+const slideNextHint = document.getElementById("slideNextHint");
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 const heroVideo = document.getElementById("heroVideo");
 const preloader = document.getElementById("preloader");
-const preloaderMusicBtn = document.getElementById("preloaderMusicBtn");
+const preloaderPhrase = document.getElementById("preloaderPhrase");
+const preloaderStartBtn = document.getElementById("preloaderStartBtn");
+const preloaderStartLabel = document.getElementById("preloaderStartLabel");
+const preloaderFallback = document.getElementById("preloaderFallback");
 const rings = document.getElementById("rings");
 const inviteSection = document.getElementById("invite");
 const wishesSection = document.getElementById("wishes");
 const calendarSection = document.getElementById("calendar");
 const dressCodeImg = document.querySelector(".dress-code-img");
-let shouldPlayMusic = true;
+let shouldPlayMusic = false;
 let musicUnlockBound = false;
 let updateMusicButton = () => {};
+let ensureMusicPlayback = async () => false;
 let preloaderOpenStarted = false;
-
-const setPreloaderMusicButtonVisible = (visible) => {
-  if (!preloaderMusicBtn) return;
-  preloaderMusicBtn.classList.toggle("is-hidden", !visible);
-};
 
 const hidePreloader = () => {
   if (!preloader) return;
   preloader.classList.add("is-hidden");
+  preloader.setAttribute("aria-hidden", "true");
   document.body.classList.remove("is-loading");
 };
 
@@ -439,12 +440,30 @@ const finishRingsAndOpen = (onDone) => {
 
 if (preloader) {
   document.body.classList.add("is-loading");
-  setPreloaderMusicButtonVisible(false);
+  preloader.setAttribute("aria-hidden", "false");
+  preloader.dataset.state = "text-sequence";
   setRingsProgress(0);
 }
 
 if (slideNextBtn) {
   const slides = Array.from(document.querySelectorAll("main > section, main > footer"));
+  const hintStorageKey = "slide-next-hint-shown";
+  let hintShown = window.sessionStorage.getItem(hintStorageKey) === "1";
+  let hintHideTimerId = null;
+  let lastAutoScrollAt = 0;
+
+  const setHintVisible = (visible) => {
+    if (!slideNextHint) return;
+    slideNextHint.classList.toggle("is-visible", visible);
+  };
+
+  const hideHint = () => {
+    setHintVisible(false);
+    if (hintHideTimerId) {
+      window.clearTimeout(hintHideTimerId);
+      hintHideTimerId = null;
+    }
+  };
 
   const getCurrentSlideIndex = () => {
     if (!slides.length) return 0;
@@ -469,10 +488,32 @@ if (slideNextBtn) {
   };
 
   const updateSlideButton = () => {
-    slideNextBtn.classList.toggle("is-hidden", !getNextSlide());
+    const hasNextSlide = Boolean(getNextSlide());
+    slideNextBtn.classList.toggle("is-hidden", !hasNextSlide);
+    if (!hasNextSlide) {
+      hideHint();
+    }
+  };
+
+  const maybeShowScrollHint = () => {
+    if (hintShown || !slideNextHint) return;
+    if (document.body.classList.contains("is-loading")) return;
+    if (slideNextBtn.classList.contains("is-hidden")) return;
+    if (window.scrollY < 14) return;
+    if (Date.now() - lastAutoScrollAt < 900) return;
+
+    hintShown = true;
+    window.sessionStorage.setItem(hintStorageKey, "1");
+    setHintVisible(true);
+    hintHideTimerId = window.setTimeout(() => {
+      setHintVisible(false);
+      hintHideTimerId = null;
+    }, 6200);
   };
 
   slideNextBtn.addEventListener("click", () => {
+    lastAutoScrollAt = Date.now();
+    hideHint();
     const targetSlide = getNextSlide();
     if (targetSlide) {
       const targetTop =
@@ -484,7 +525,12 @@ if (slideNextBtn) {
     }
   });
 
-  window.addEventListener("scroll", updateSlideButton, { passive: true });
+  const onScroll = () => {
+    updateSlideButton();
+    maybeShowScrollHint();
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", updateSlideButton);
   updateSlideButton();
 }
@@ -592,29 +638,32 @@ if (calendarSection) {
   }
 }
 
-const VIDEO_PRELOADER_TIMEOUT_MS = 10000;
+const PRELOADER_MEDIA_FALLBACK_MS = 10000;
 const DRESS_IMAGE_PRELOAD_TIMEOUT_MS = 4500;
+const AUDIO_READY_BUFFER_RATIO = 0.08;
+const PRELOADER_TEXT_LINES = [
+  "Ми дуже довго чекали на цей день",
+  "і бажаємо розділити його саме з Вами.",
+];
 
-const waitForVideoReady = (timeoutMs = VIDEO_PRELOADER_TIMEOUT_MS) =>
+const waitForVideoReady = () =>
   new Promise((resolve) => {
     if (!heroVideo) {
-      resolve("no-video");
+      resolve("ready");
       return;
     }
     if (heroVideo.readyState >= 2) {
-      resolve("ready-state");
+      resolve("ready");
       return;
     }
 
     let settled = false;
-    let timeoutId;
 
     const cleanup = () => {
       heroVideo.removeEventListener("loadeddata", onReady);
       heroVideo.removeEventListener("canplay", onReady);
       heroVideo.removeEventListener("canplaythrough", onReady);
       heroVideo.removeEventListener("error", onError);
-      clearTimeout(timeoutId);
     };
 
     const finish = (reason) => {
@@ -629,7 +678,7 @@ const waitForVideoReady = (timeoutMs = VIDEO_PRELOADER_TIMEOUT_MS) =>
         finish("ready");
         return;
       }
-      finish("ready-event");
+      finish("ready");
     };
 
     const onError = () => {
@@ -640,9 +689,6 @@ const waitForVideoReady = (timeoutMs = VIDEO_PRELOADER_TIMEOUT_MS) =>
     heroVideo.addEventListener("canplay", onReady, { once: true });
     heroVideo.addEventListener("canplaythrough", onReady, { once: true });
     heroVideo.addEventListener("error", onError, { once: true });
-    timeoutId = window.setTimeout(() => {
-      finish("timeout");
-    }, timeoutMs);
   });
 
 const waitForDressImageReady = (timeoutMs = DRESS_IMAGE_PRELOAD_TIMEOUT_MS) =>
@@ -682,7 +728,72 @@ const waitForDressImageReady = (timeoutMs = DRESS_IMAGE_PRELOAD_TIMEOUT_MS) =>
     }, timeoutMs);
   });
 
+const getBufferedRatio = () => {
+  if (!bgMusic) return 0;
+  if (!Number.isFinite(bgMusic.duration) || bgMusic.duration <= 0 || bgMusic.buffered.length === 0) {
+    return 0;
+  }
+  const bufferedEnd = bgMusic.buffered.end(bgMusic.buffered.length - 1);
+  return Math.max(0, Math.min(1, bufferedEnd / bgMusic.duration));
+};
+
+const isAudioReady = () => {
+  if (!bgMusic) return true;
+  if (bgMusic.readyState >= 3) return true;
+  return getBufferedRatio() >= AUDIO_READY_BUFFER_RATIO;
+};
+
+const waitForAudioReady = () =>
+  new Promise((resolve) => {
+    if (!bgMusic) {
+      resolve("ready");
+      return;
+    }
+    if (isAudioReady()) {
+      resolve("ready");
+      return;
+    }
+
+    let settled = false;
+
+    const cleanup = () => {
+      bgMusic.removeEventListener("canplay", onReady);
+      bgMusic.removeEventListener("canplaythrough", onReady);
+      bgMusic.removeEventListener("loadedmetadata", onReady);
+      bgMusic.removeEventListener("durationchange", onReady);
+      bgMusic.removeEventListener("progress", onReady);
+      bgMusic.removeEventListener("error", onError);
+    };
+
+    const finish = (reason) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(reason);
+    };
+
+    const onReady = () => {
+      if (isAudioReady()) {
+        finish("ready");
+      }
+    };
+
+    const onError = () => {
+      finish("error");
+    };
+
+    bgMusic.addEventListener("canplay", onReady);
+    bgMusic.addEventListener("canplaythrough", onReady);
+    bgMusic.addEventListener("loadedmetadata", onReady);
+    bgMusic.addEventListener("durationchange", onReady);
+    bgMusic.addEventListener("progress", onReady);
+    bgMusic.addEventListener("error", onError, { once: true });
+  });
+
 if (bgMusic && musicToggle) {
+  bgMusic.autoplay = false;
+  bgMusic.pause();
+
   updateMusicButton = () => {
     musicToggle.classList.toggle("is-playing", shouldPlayMusic);
     musicToggle.setAttribute("aria-label", shouldPlayMusic ? "Вимкнути музику" : "Увімкнути музику");
@@ -723,7 +834,7 @@ if (bgMusic && musicToggle) {
     updateMusicButton();
   };
 
-  const ensureMusicPlayback = async () => {
+  ensureMusicPlayback = async () => {
     const started = await playMusic();
     if (!started) {
       bindMusicUnlock();
@@ -748,97 +859,158 @@ if (bgMusic && musicToggle) {
   });
 
   updateMusicButton();
+}
 
-  const getBufferedRatio = () => {
-    if (!Number.isFinite(bgMusic.duration) || bgMusic.duration <= 0 || bgMusic.buffered.length === 0) {
-      return 0;
-    }
-    const bufferedEnd = bgMusic.buffered.end(bgMusic.buffered.length - 1);
-    return Math.max(0, Math.min(1, bufferedEnd / bgMusic.duration));
+const runPreloaderTextSequence = async () => {
+  if (!preloaderPhrase) return;
+
+  const reducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const inDelay = reducedMotion ? 260 : 780;
+  const holdDelay = reducedMotion ? 220 : 520;
+
+  preloaderPhrase.innerHTML = "";
+  for (let index = 0; index < PRELOADER_TEXT_LINES.length; index += 1) {
+    const lineEl = document.createElement("p");
+    lineEl.className = "preloader__phrase-line";
+    lineEl.textContent = PRELOADER_TEXT_LINES[index];
+    preloaderPhrase.append(lineEl);
+
+    void lineEl.offsetWidth;
+    lineEl.classList.add("is-visible");
+
+    await new Promise((resolve) => {
+      window.setTimeout(resolve, inDelay + holdDelay);
+    });
+  }
+};
+
+const initPreloaderWelcome = () => {
+  if (!preloader) return;
+
+  const state = {
+    textDone: false,
+    videoReady: !heroVideo,
+    audioReady: !bgMusic,
+    closing: false,
+    fallbackShown: false,
   };
 
-  const waitForAudioBuffer = (targetRatio = 0.4, timeoutMs = 25000) =>
-    new Promise((resolve) => {
-      if (getBufferedRatio() >= targetRatio) {
-        resolve();
-        return;
-      }
+  const setState = (value) => {
+    preloader.dataset.state = value;
+  };
 
-      let timeoutId;
-      const check = () => {
-        if (getBufferedRatio() >= targetRatio) {
-          cleanup();
-          resolve();
-        }
-      };
+  const isMediaReady = () => state.videoReady && state.audioReady;
 
-      const cleanup = () => {
-        bgMusic.removeEventListener("progress", check);
-        bgMusic.removeEventListener("loadedmetadata", check);
-        bgMusic.removeEventListener("durationchange", check);
-        bgMusic.removeEventListener("canplaythrough", check);
-        clearTimeout(timeoutId);
-      };
+  const updateCta = () => {
+    if (!preloaderStartBtn || !preloaderStartLabel) return;
+    const ready = state.textDone && isMediaReady();
+    preloaderStartBtn.disabled = !ready;
+    preloaderStartBtn.classList.toggle("is-ready", ready);
+    preloaderStartBtn.classList.toggle("is-loading", !ready);
+    preloaderStartLabel.textContent = ready ? "РОЗПОЧАТИ" : "Завантаження...";
+  };
 
-      bgMusic.addEventListener("progress", check);
-      bgMusic.addEventListener("loadedmetadata", check);
-      bgMusic.addEventListener("durationchange", check);
-      bgMusic.addEventListener("canplaythrough", check);
-      timeoutId = window.setTimeout(() => {
-        cleanup();
-        resolve();
-      }, timeoutMs);
-      check();
-    });
-
-  const bootstrapMedia = async () => {
-    if (preloaderMusicBtn) {
-      preloaderMusicBtn.addEventListener("click", async () => {
-        const manualStart = await ensureMusicPlayback();
-        if (manualStart) {
-          setPreloaderMusicButtonVisible(false);
-        }
-      });
+  const updateFallbackNotice = () => {
+    if (!preloaderFallback) return;
+    if (state.fallbackShown && !isMediaReady() && !state.closing) {
+      preloaderFallback.textContent = "Медіа завантажуються трохи довше, ніж очікувалось...";
+      preloaderFallback.classList.add("is-visible");
+      return;
     }
+    preloaderFallback.textContent = "";
+    preloaderFallback.classList.remove("is-visible");
+  };
 
-    waitForAudioBuffer(0.4).then(async () => {
-      const started = await ensureMusicPlayback();
-      if (!started && preloaderMusicBtn) {
-        setPreloaderMusicButtonVisible(true);
-      }
-    });
-
-    const videoState = await waitForVideoReady();
-    const dressImageState = await waitForDressImageReady();
-    if (videoState === "timeout" || videoState === "error") {
-      console.warn(`Hero video fallback: ${videoState}`);
+  const syncState = () => {
+    if (state.closing) {
+      setState("closing");
+    } else if (!state.textDone) {
+      setState("text-sequence");
+    } else if (!isMediaReady()) {
+      setState("waiting-media");
+    } else {
+      setState("ready");
     }
+    updateCta();
+    updateFallbackNotice();
+  };
+
+  const closePreloader = () => {
+    if (state.closing) return;
+    state.closing = true;
+    syncState();
+    finishRingsAndOpen(() => {
+      preloader.classList.add("is-closing");
+      window.setTimeout(() => {
+        hidePreloader();
+      }, 540);
+    });
+  };
+
+  syncState();
+
+  let fallbackTimerId = window.setTimeout(() => {
+    if (!isMediaReady() && !state.closing) {
+      state.fallbackShown = true;
+      syncState();
+    }
+  }, PRELOADER_MEDIA_FALLBACK_MS);
+
+  runPreloaderTextSequence().then(() => {
+    state.textDone = true;
+    preloader.classList.add("is-text-done");
+    syncState();
+  });
+
+  waitForVideoReady().then(async (videoState) => {
+    if (videoState === "error") {
+      console.warn("Hero video readiness error.");
+    } else {
+      state.videoReady = true;
+      try {
+        await heroVideo?.play();
+      } catch (_) {
+        // Ignore autoplay errors for muted background video.
+      }
+    }
+    if (isMediaReady() && fallbackTimerId) {
+      clearTimeout(fallbackTimerId);
+      fallbackTimerId = null;
+    }
+    syncState();
+  });
+
+  waitForAudioReady().then((audioState) => {
+    if (audioState === "error") {
+      console.warn("Background audio readiness error.");
+    } else {
+      state.audioReady = true;
+    }
+    if (isMediaReady() && fallbackTimerId) {
+      clearTimeout(fallbackTimerId);
+      fallbackTimerId = null;
+    }
+    syncState();
+  });
+
+  waitForDressImageReady().then((dressImageState) => {
     if (dressImageState === "timeout" || dressImageState === "error") {
       console.warn(`Dress image preload state: ${dressImageState}`);
     }
-
-    try {
-      await heroVideo?.play();
-    } catch (_) {
-      // Ignore autoplay errors for video.
-    }
-    finishRingsAndOpen(hidePreloader);
-  };
-
-  bootstrapMedia();
-} else {
-  waitForVideoReady().then(async (videoState) => {
-    if (videoState === "timeout" || videoState === "error") {
-      console.warn(`Hero video fallback: ${videoState}`);
-    }
-    try {
-      await heroVideo?.play();
-    } catch (_) {
-      // Ignore autoplay errors for video.
-    }
-    finishRingsAndOpen(hidePreloader);
   });
-}
+
+  preloaderStartBtn?.addEventListener("click", async () => {
+    if (preloaderStartBtn.disabled || state.closing) return;
+    shouldPlayMusic = true;
+    updateMusicButton();
+    await ensureMusicPlayback();
+    clearTimeout(fallbackTimerId);
+    closePreloader();
+  });
+};
+
+initPreloaderWelcome();
 
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
   const watchedFiles = ["index.html", "styles.css", "script.js"];
